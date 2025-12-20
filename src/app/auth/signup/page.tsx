@@ -2,10 +2,17 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Mail, Lock, User, Eye, EyeOff, Phone } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Mail, Lock, User, Eye, EyeOff, Phone, AlertCircle, CheckCircle } from 'lucide-react';
+import { useAuth } from '@/lib/auth-context';
 
 export default function SignupPage() {
+  const router = useRouter();
+  const { signUp } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -14,10 +21,47 @@ export default function SignupPage() {
     confirmPassword: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle signup logic here
-    console.log('Signup:', formData);
+    setError('');
+    setSuccess(false);
+    setLoading(true);
+
+    // Validation
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const { error } = await signUp(
+        formData.email,
+        formData.password,
+        formData.name,
+        formData.phone
+      );
+
+      if (error) {
+        setError(error.message || 'Failed to create account. Please try again.');
+      } else {
+        setSuccess(true);
+        setTimeout(() => {
+          router.push('/');
+          router.refresh();
+        }, 2000);
+      }
+    } catch (err) {
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -29,6 +73,24 @@ export default function SignupPage() {
             <h2 className="text-3xl font-bold text-gray-900">Create Account</h2>
             <p className="mt-2 text-gray-600">Join us today and start shopping</p>
           </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start space-x-2">
+              <AlertCircle size={20} className="text-red-600 mt-0.5 flex-shrink-0" />
+              <p className="text-sm text-red-600">{error}</p>
+            </div>
+          )}
+
+          {/* Success Message */}
+          {success && (
+            <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-start space-x-2">
+              <CheckCircle size={20} className="text-green-600 mt-0.5 flex-shrink-0" />
+              <p className="text-sm text-green-600">
+                Account created successfully! Please check your email to verify your account.
+              </p>
+            </div>
+          )}
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -171,9 +233,10 @@ export default function SignupPage() {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-primary-600 text-white py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
+              disabled={loading || success}
+              className="w-full bg-primary-600 text-white py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Create Account
+              {loading ? 'Creating Account...' : success ? 'Account Created!' : 'Create Account'}
             </button>
           </form>
 

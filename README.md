@@ -1,6 +1,6 @@
 # Silkrute E-commerce Platform
 
-A modern, full-featured e-commerce web application built with Next.js 15, TypeScript, and Tailwind CSS. Inspired by Silkrute.co.uk, this monolithic application provides a complete shopping experience for authentic Indian and ethnic products.
+A modern, full-featured e-commerce web application built with Next.js 15, TypeScript, Tailwind CSS, and Supabase. Inspired by Silkrute.co.uk, this monolithic application provides a complete shopping experience for authentic Indian and ethnic products with real-time authentication and database integration.
 
 ## Features
 
@@ -18,12 +18,14 @@ A modern, full-featured e-commerce web application built with Next.js 15, TypeSc
 - **Category Navigation**: Easy navigation across different product categories
 - **Promotional Sections**: Featured deals and discount banners
 
-### 🔐 User Authentication (UI Ready)
-- Login page with email/password
-- Sign up page with form validation
-- Social login buttons (Google, Facebook)
-- Password visibility toggle
-- Remember me functionality
+### 🔐 User Authentication (Supabase Auth)
+- **Email/Password Authentication**: Full sign up and login flow
+- **Social Login**: Google and Facebook OAuth integration
+- **User Profiles**: Automatic profile creation with metadata
+- **Session Management**: Secure session handling with cookies
+- **Protected Routes**: Middleware-based route protection
+- **User Menu**: Account dropdown with profile and logout
+- **Email Verification**: Supabase email confirmation flow
 
 ### 📦 Product Features
 - Product ratings and reviews display
@@ -54,6 +56,8 @@ A modern, full-featured e-commerce web application built with Next.js 15, TypeSc
 - **Framework**: Next.js 15 (App Router)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
+- **Database**: Supabase (PostgreSQL)
+- **Authentication**: Supabase Auth
 - **Icons**: Lucide React
 - **State Management**: React Context API
 - **Image Handling**: Next.js Image Optimization
@@ -117,12 +121,29 @@ cd ecom-shaswat
 npm install
 ```
 
-3. Run the development server:
+3. Set up Supabase:
+   - Follow the detailed guide in [SUPABASE_SETUP.md](./SUPABASE_SETUP.md)
+   - Create a Supabase project
+   - Run the schema.sql file
+   - Configure authentication providers
+
+4. Configure environment variables:
+```bash
+cp .env.local.example .env.local
+```
+
+Then edit `.env.local` and add your Supabase credentials:
+```env
+NEXT_PUBLIC_SUPABASE_URL=your-project-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
+
+5. Run the development server:
 ```bash
 npm run dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
+6. Open [http://localhost:3000](http://localhost:3000) in your browser
 
 ### Build for Production
 
@@ -202,20 +223,41 @@ Modify components in `src/components/layout/` to customize:
 - Navigation menu
 - Footer content
 
+## Database Schema
+
+The application uses Supabase (PostgreSQL) with the following tables:
+
+- **profiles** - User profiles (extends Supabase auth.users)
+- **products** - Product catalog
+- **cart_items** - User shopping carts
+- **orders** - Order history
+- **order_items** - Order line items
+
+All tables have Row Level Security (RLS) enabled for data protection.
+
+See [SUPABASE_SETUP.md](./SUPABASE_SETUP.md) for detailed schema information.
+
+## Authentication Flow
+
+1. **Sign Up**: User creates account → Email verification sent → Profile created automatically
+2. **Sign In**: User logs in → Session created → JWT stored in cookies
+3. **Protected Routes**: Middleware checks session → Redirects to login if needed
+4. **Sign Out**: User logs out → Session cleared → Redirected to home
+
 ## Future Enhancements
 
-- Backend API integration
-- User authentication (backend)
-- Payment gateway integration
-- Order management system
-- Product search functionality
-- Wishlist feature
-- Product reviews and ratings
-- Order tracking
-- Admin dashboard
-- Email notifications
-- Multi-language support
+- Payment gateway integration (Stripe, PayPal)
+- Order management system with status tracking
+- Product search functionality with filters
+- Wishlist feature synced to database
+- Product reviews and ratings system
+- Order tracking with real-time updates
+- Admin dashboard for product/order management
+- Email notifications for orders
+- Multi-language support (i18n)
 - Currency conversion
+- Advanced analytics and reporting
+- Inventory management
 
 ## Performance Optimizations
 
