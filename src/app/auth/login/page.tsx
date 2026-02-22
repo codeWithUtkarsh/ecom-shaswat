@@ -1,74 +1,81 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
-import { useAuth } from '@/lib/auth-context';
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { useAuth } from "@/lib/auth-context";
 
 export default function LoginPage() {
   const router = useRouter();
   const { signIn, signInWithGoogle, signInWithFacebook } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
 
     try {
       const { error } = await signIn(formData.email, formData.password);
 
       if (error) {
-        setError(error.message || 'Failed to sign in. Please check your credentials.');
+        setError(
+          error.message || "Failed to sign in. Please check your credentials.",
+        );
       } else {
-        router.push('/');
+        router.push("/");
         router.refresh();
       }
-    } catch (err) {
-      setError('An unexpected error occurred. Please try again.');
+    } catch {
+      setError("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   const handleGoogleSignIn = async () => {
-    setError('');
+    setError("");
     const { error } = await signInWithGoogle();
     if (error) {
-      setError(error.message || 'Failed to sign in with Google');
+      setError(error.message || "Failed to sign in with Google");
     }
   };
 
   const handleFacebookSignIn = async () => {
-    setError('');
+    setError("");
     const { error } = await signInWithFacebook();
     if (error) {
-      setError(error.message || 'Failed to sign in with Facebook');
+      setError(error.message || "Failed to sign in with Facebook");
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 aurora">
       <div className="max-w-md w-full">
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="bg-white rounded-2xl p-8 shadow-soft-lg border border-surface-200">
           {/* Header */}
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900">Welcome Back</h2>
-            <p className="mt-2 text-gray-600">Sign in to your account</p>
+            <h2 className="text-3xl font-bold text-navy">Welcome Back</h2>
+            <p className="mt-2 text-surface-500">
+              Sign in to your Vyapaar Global account
+            </p>
           </div>
 
           {/* Error Message */}
           {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start space-x-2">
-              <AlertCircle size={20} className="text-red-600 mt-0.5 flex-shrink-0" />
-              <p className="text-sm text-red-600">{error}</p>
+              <AlertCircle
+                size={20}
+                className="text-accent-rose mt-0.5 flex-shrink-0"
+              />
+              <p className="text-sm text-accent-rose">{error}</p>
             </div>
           )}
 
@@ -76,20 +83,25 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-navy/70 mb-2"
+              >
                 Email Address
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail size={20} className="text-gray-400" />
+                  <Mail size={20} className="text-surface-400" />
                 </div>
                 <input
                   id="email"
                   type="email"
                   required
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  className="block w-full pl-10 pr-3 py-2.5 bg-surface-50 border border-surface-200 rounded-xl text-navy placeholder:text-surface-400 focus:outline-none focus:border-orange/40 focus:ring-2 focus:ring-orange/10 transition-all"
                   placeholder="you@example.com"
                 />
               </div>
@@ -97,20 +109,25 @@ export default function LoginPage() {
 
             {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-navy/70 mb-2"
+              >
                 Password
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock size={20} className="text-gray-400" />
+                  <Lock size={20} className="text-surface-400" />
                 </div>
                 <input
                   id="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   required
                   value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                  className="block w-full pl-10 pr-10 py-2.5 bg-surface-50 border border-surface-200 rounded-xl text-navy placeholder:text-surface-400 focus:outline-none focus:border-orange/40 focus:ring-2 focus:ring-orange/10 transition-all"
                   placeholder="••••••••"
                 />
                 <button
@@ -119,9 +136,9 @@ export default function LoginPage() {
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
                 >
                   {showPassword ? (
-                    <EyeOff size={20} className="text-gray-400" />
+                    <EyeOff size={20} className="text-surface-400" />
                   ) : (
-                    <Eye size={20} className="text-gray-400" />
+                    <Eye size={20} className="text-surface-400" />
                   )}
                 </button>
               </div>
@@ -133,13 +150,19 @@ export default function LoginPage() {
                 <input
                   id="remember-me"
                   type="checkbox"
-                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                  className="h-4 w-4 rounded border-surface-300 bg-surface-50"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
+                <label
+                  htmlFor="remember-me"
+                  className="ml-2 block text-sm text-surface-500"
+                >
                   Remember me
                 </label>
               </div>
-              <Link href="/auth/forgot-password" className="text-sm text-primary-600 hover:text-primary-700">
+              <Link
+                href="/auth/forgot-password"
+                className="text-sm text-orange hover:text-orange-dark transition-colors"
+              >
                 Forgot password?
               </Link>
             </div>
@@ -148,9 +171,9 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-primary-600 text-white py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-navy text-white py-3 rounded-xl font-bold hover:bg-navy-light transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? "Signing in..." : "Sign In"}
             </button>
           </form>
 
@@ -158,10 +181,12 @@ export default function LoginPage() {
           <div className="mt-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
+                <div className="w-full border-t border-surface-200" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                <span className="px-2 bg-white text-surface-400">
+                  Or continue with
+                </span>
               </div>
             </div>
           </div>
@@ -170,7 +195,7 @@ export default function LoginPage() {
           <div className="mt-6 grid grid-cols-2 gap-3">
             <button
               onClick={handleGoogleSignIn}
-              className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex items-center justify-center px-4 py-2.5 border border-surface-200 rounded-xl hover:bg-surface-50 transition-colors text-surface-500"
             >
               <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                 <path
@@ -194,7 +219,7 @@ export default function LoginPage() {
             </button>
             <button
               onClick={handleFacebookSignIn}
-              className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex items-center justify-center px-4 py-2.5 border border-surface-200 rounded-xl hover:bg-surface-50 transition-colors text-surface-500"
             >
               <svg className="w-5 h-5 mr-2" fill="#1877F2" viewBox="0 0 24 24">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
@@ -204,9 +229,12 @@ export default function LoginPage() {
           </div>
 
           {/* Sign Up Link */}
-          <p className="mt-6 text-center text-sm text-gray-600">
-            Don't have an account?{' '}
-            <Link href="/auth/signup" className="font-medium text-primary-600 hover:text-primary-700">
+          <p className="mt-6 text-center text-sm text-surface-500">
+            Don&apos;t have an account?{" "}
+            <Link
+              href="/auth/signup"
+              className="font-medium text-orange hover:text-orange-dark transition-colors"
+            >
               Sign up
             </Link>
           </p>

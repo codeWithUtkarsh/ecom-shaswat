@@ -1,14 +1,15 @@
-import type { Metadata } from 'next';
-import './globals.css';
-import Header from '@/components/layout/Header';
-import Navigation from '@/components/layout/Navigation';
-import Footer from '@/components/layout/Footer';
-import { CartProvider } from '@/lib/cart-context';
-import { AuthProvider } from '@/lib/auth-context';
+import type { Metadata } from "next";
+import "./globals.css";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
+import { CartProvider } from "@/lib/cart-context";
+import { AuthProvider } from "@/lib/auth-context";
 
 export const metadata: Metadata = {
-  title: 'Silkrute - Authentic Indian & Ethnic Products',
-  description: 'Shop authentic Indian and ethnic products worldwide. Quality products with free shipping.',
+  title:
+    "Vyapaar Global — Agri-Commerce Reimagined | B2B Supply to UK Retailers",
+  description:
+    "Importing premium food products with B2B direct supply to UK retailers. Smart sourcing, smart logistics, smart living. From farm to home.",
 };
 
 export default function RootLayout({
@@ -18,11 +19,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="font-sans">
+      <body className="font-sans bg-surface-50 text-navy-dark">
         <AuthProvider>
           <CartProvider>
             <Header />
-            <Navigation />
             <main className="min-h-screen">{children}</main>
             <Footer />
           </CartProvider>

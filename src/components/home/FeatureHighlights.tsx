@@ -1,40 +1,47 @@
-import { Headphones, Truck, Shield } from 'lucide-react';
+"use client";
+
+import Link from "next/link";
+import Image from "next/image";
+import { categories } from "@/lib/data";
 
 export default function FeatureHighlights() {
-  const features = [
-    {
-      icon: Headphones,
-      title: '24 x 7 Support',
-      description: 'Always here to help',
-    },
-    {
-      icon: Truck,
-      title: 'Free Shipping',
-      description: 'On orders over £50',
-    },
-    {
-      icon: Shield,
-      title: 'Secure Payment',
-      description: '100% protected',
-    },
-  ];
-
   return (
-    <div className="bg-gradient-to-r from-orange-50 to-amber-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {features.map((feature, index) => (
-            <div key={index} className="flex items-center space-x-4">
-              <div className="bg-primary-100 p-4 rounded-full">
-                <feature.icon size={32} className="text-primary-600" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg text-gray-900">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
-              </div>
+    <div className="max-w-[1400px] mx-auto px-8 mt-10">
+      {/* Section header */}
+      <div className="mb-5">
+        <h2 className="text-2xl font-extrabold text-navy">
+          Featured Categories
+        </h2>
+        <p className="text-sm text-surface-500 mt-0.5">
+          Browse our most popular categories
+        </p>
+      </div>
+
+      {/* Full-width category grid */}
+      <div className="grid grid-cols-5 md:grid-cols-10 gap-3">
+        {categories.map((cat) => (
+          <Link
+            key={cat.id}
+            href={`/products/${cat.slug}`}
+            className="bg-white border border-surface-200 rounded-2xl p-4 text-center group hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300"
+          >
+            <div className="w-16 h-16 rounded-full bg-surface-50 mx-auto mb-3 overflow-hidden ring-2 ring-surface-200 group-hover:ring-orange/30 transition-all">
+              <Image
+                src={cat.image}
+                alt={cat.name}
+                width={64}
+                height={64}
+                className="w-full h-full object-cover"
+              />
             </div>
-          ))}
-        </div>
+            <div className="text-xs font-bold text-navy group-hover:text-orange transition-colors">
+              {cat.name}
+            </div>
+            <div className="text-[10px] text-surface-400 mt-0.5">
+              {cat.itemCount} items
+            </div>
+          </Link>
+        ))}
       </div>
     </div>
   );

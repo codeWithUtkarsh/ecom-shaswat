@@ -6,9 +6,13 @@ export interface Product {
   discount?: number;
   image: string;
   category: string;
+  categoryLabel: string;
   description: string;
-  rating?: number;
-  reviews?: number;
+  weight?: string;
+  rating: number;
+  reviews: number;
+  vendor: string;
+  badge?: "hot" | "new" | "sale" | "out";
   inStock: boolean;
 }
 
@@ -22,6 +26,8 @@ export interface Category {
   name: string;
   slug: string;
   image: string;
+  icon: string;
+  itemCount: number;
   subcategories?: string[];
 }
 
@@ -32,6 +38,15 @@ export interface Banner {
   image: string;
   cta: string;
   link: string;
+}
+
+export interface PromoBanner {
+  id: string;
+  label: string;
+  value: string;
+  description: string;
+  bgColor: string;
+  textColor: string;
 }
 
 export interface User {
