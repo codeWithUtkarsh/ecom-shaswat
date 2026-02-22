@@ -9,135 +9,119 @@ import {
   Phone,
   MapPin,
   ArrowRight,
+  Send,
 } from "lucide-react";
+
+const footerLinks = [
+  {
+    title: "Company",
+    links: [
+      ["About Us", "/about"],
+      ["Contact", "/contact"],
+      ["Delivery Info", "/shipping"],
+      ["Returns Policy", "/returns"],
+      ["FAQ", "/faq"],
+    ],
+  },
+  {
+    title: "For Retailers",
+    links: [
+      ["My Account", "/account"],
+      ["Order Tracking", "/orders"],
+      ["Bulk Pricing", "/pricing"],
+      ["Become a Partner", "/seller"],
+      ["Help Centre", "/help"],
+    ],
+  },
+  {
+    title: "Categories",
+    links: [
+      ["Vegetables", "/products/vegetable"],
+      ["Fresh Fruits", "/products/fruits"],
+      ["Spices & Herbs", "/products/spices"],
+      ["Dairy & Milk", "/products/cake-milk"],
+      ["Grains & Rice", "/products/grains"],
+    ],
+  },
+];
+
+const socials = [
+  { Icon: Facebook, label: "Facebook" },
+  { Icon: Twitter, label: "Twitter" },
+  { Icon: Instagram, label: "Instagram" },
+  { Icon: Youtube, label: "Youtube" },
+];
 
 export default function Footer() {
   return (
     <footer className="relative">
-      {/* Top accent line */}
-      <div
-        className="absolute top-0 left-0 right-0 h-px"
-        style={{
-          backgroundImage:
-            "linear-gradient(90deg, transparent, rgba(27, 42, 91, 0.3), rgba(245, 144, 31, 0.3), rgba(27, 42, 91, 0.2), transparent)",
-        }}
-      />
-
-      {/* Newsletter strip */}
-      <div className="border-b border-white/10 bg-navy">
-        <div className="max-w-[1400px] mx-auto px-8 py-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div>
-              <h3 className="text-xl font-extrabold text-white">
-                Partner with Vyapaar Global
+      {/* Main footer */}
+      <div className="bg-[#0C1529]">
+        <div className="max-w-[1400px] mx-auto px-8 pt-14 pb-10">
+          {/* Newsletter row */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-12 mb-12 border-b border-white/[0.06]">
+            <div className="flex-1">
+              <h3 className="font-display text-xl font-bold text-white">
+                Stay in the loop
               </h3>
-              <p className="text-white/50 text-sm mt-1">
-                Get wholesale pricing, new product alerts & supply chain
-                updates.
+              <p className="text-white/40 text-sm mt-1.5">
+                Get wholesale pricing, new product alerts & supply chain updates.
               </p>
             </div>
             <div className="flex w-full max-w-md">
               <input
                 type="email"
                 placeholder="Your business email..."
-                className="flex-1 px-5 py-3 bg-white/10 border border-white/20 rounded-l-xl text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-orange/50 transition-all"
+                className="flex-1 px-5 py-3 bg-white/[0.06] border border-white/10 rounded-l-xl text-sm text-white placeholder:text-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all"
               />
-              <button className="bg-orange text-white px-6 py-3 rounded-r-xl font-bold text-sm hover:bg-orange-dark transition-all flex items-center gap-1.5">
+              <button className="bg-orange text-white px-6 py-3 rounded-r-xl font-display font-bold text-sm hover:bg-orange-dark transition-all flex items-center gap-2">
                 Subscribe
-                <ArrowRight size={14} />
+                <Send size={14} />
               </button>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Main footer */}
-      <div className="bg-navy-dark">
-        <div className="max-w-[1400px] mx-auto px-8 py-10">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
-            {/* Brand */}
-            <div className="col-span-2 md:col-span-1">
-              <div className="mb-4">
-                <Image
-                  src="/logo.jpg"
-                  alt="Vyapaar Global"
-                  width={120}
-                  height={35}
-                  className="h-10 w-auto object-contain brightness-0 invert"
-                />
-              </div>
-              <p className="text-xs text-white/40 leading-relaxed mb-4">
-                Importing premium food products. B2B direct supply to UK
-                retailers. Smart sourcing, smart logistics, smart living.
+          <div className="grid grid-cols-2 md:grid-cols-12 gap-8 md:gap-6">
+            {/* Brand column */}
+            <div className="col-span-2 md:col-span-3">
+              <Image
+                src="/logo.jpg"
+                alt="Vyapaar Global"
+                width={140}
+                height={40}
+                className="h-10 w-auto object-contain brightness-0 invert mb-5"
+              />
+              <p className="text-[13px] text-white/40 leading-relaxed mb-6 max-w-[240px]">
+                Importing premium food products with B2B direct supply to UK
+                retailers. From farm to home.
               </p>
-              <ul className="space-y-2 text-xs text-white/40">
-                <li className="flex items-center gap-2">
-                  <MapPin
-                    size={12}
-                    className="text-orange/70 flex-shrink-0"
-                  />{" "}
+              <div className="space-y-3">
+                <a href="#" className="flex items-center gap-2.5 text-[13px] text-white/45 hover:text-orange transition-colors group">
+                  <MapPin size={14} className="text-orange/60 group-hover:text-orange flex-shrink-0" />
                   London, United Kingdom
-                </li>
-                <li className="flex items-center gap-2">
-                  <Phone
-                    size={12}
-                    className="text-orange/70 flex-shrink-0"
-                  />{" "}
+                </a>
+                <a href="tel:+442079460958" className="flex items-center gap-2.5 text-[13px] text-white/45 hover:text-orange transition-colors group">
+                  <Phone size={14} className="text-orange/60 group-hover:text-orange flex-shrink-0" />
                   +44 20 7946 0958
-                </li>
-                <li className="flex items-center gap-2">
-                  <Mail
-                    size={12}
-                    className="text-orange/70 flex-shrink-0"
-                  />{" "}
+                </a>
+                <a href="mailto:hello@vyapaarglobal.com" className="flex items-center gap-2.5 text-[13px] text-white/45 hover:text-orange transition-colors group">
+                  <Mail size={14} className="text-orange/60 group-hover:text-orange flex-shrink-0" />
                   hello@vyapaarglobal.com
-                </li>
-              </ul>
+                </a>
+              </div>
             </div>
 
-            {/* Links columns */}
-            {[
-              {
-                title: "Company",
-                links: [
-                  ["About Us", "/about"],
-                  ["Contact", "/contact"],
-                  ["Delivery Info", "/shipping"],
-                  ["Returns Policy", "/returns"],
-                  ["FAQ", "/faq"],
-                ],
-              },
-              {
-                title: "For Retailers",
-                links: [
-                  ["My Account", "/account"],
-                  ["Order Tracking", "/orders"],
-                  ["Bulk Pricing", "/pricing"],
-                  ["Become a Partner", "/seller"],
-                  ["Help Centre", "/help"],
-                ],
-              },
-              {
-                title: "Categories",
-                links: [
-                  ["Vegetables", "/products/vegetable"],
-                  ["Fresh Fruits", "/products/fruits"],
-                  ["Spices & Herbs", "/products/spices"],
-                  ["Dairy & Milk", "/products/cake-milk"],
-                  ["Grains & Rice", "/products/grains"],
-                ],
-              },
-            ].map((col) => (
-              <div key={col.title}>
-                <h4 className="text-sm font-bold text-white mb-4">
+            {/* Link columns */}
+            {footerLinks.map((col) => (
+              <div key={col.title} className="col-span-1 md:col-span-2">
+                <h4 className="font-display text-sm font-bold text-white mb-5">
                   {col.title}
                 </h4>
-                <ul className="space-y-2.5">
+                <ul className="space-y-3">
                   {col.links.map(([label, href]) => (
                     <li key={label}>
                       <Link
                         href={href}
-                        className="text-xs text-white/40 hover:text-orange transition-colors"
+                        className="text-[13px] text-white/40 hover:text-white hover:translate-x-0.5 transition-all inline-block"
                       >
                         {label}
                       </Link>
@@ -147,41 +131,56 @@ export default function Footer() {
               </div>
             ))}
 
-            {/* Connect */}
-            <div>
-              <h4 className="text-sm font-bold text-white mb-4">Connect</h4>
-              <p className="text-xs text-white/40 mb-3">
-                Follow us for supply updates
+            {/* Connect column */}
+            <div className="col-span-2 md:col-span-3">
+              <h4 className="font-display text-sm font-bold text-white mb-5">
+                Connect
+              </h4>
+              <p className="text-[13px] text-white/40 mb-4">
+                Follow us for supply updates & industry insights.
               </p>
-              <div className="flex gap-2 mb-5">
-                <div className="bg-white/10 border border-white/10 text-white/60 px-3 py-2 rounded-lg text-[10px] font-semibold hover:border-orange/30 hover:text-orange transition-all cursor-pointer">
-                  LinkedIn
-                </div>
-                <div className="bg-white/10 border border-white/10 text-white/60 px-3 py-2 rounded-lg text-[10px] font-semibold hover:border-orange/30 hover:text-orange transition-all cursor-pointer">
-                  WhatsApp
-                </div>
-              </div>
-              <div className="flex gap-2">
-                {[Facebook, Twitter, Instagram, Youtube].map((Icon, i) => (
+              <div className="flex gap-2 mb-6">
+                {socials.map(({ Icon, label }) => (
                   <a
-                    key={i}
+                    key={label}
                     href="#"
-                    className="w-8 h-8 bg-white/10 border border-white/10 rounded-lg flex items-center justify-center text-white/50 hover:bg-orange/20 hover:border-orange/30 hover:text-orange transition-all"
+                    aria-label={label}
+                    className="w-9 h-9 bg-white/[0.06] rounded-xl flex items-center justify-center text-white/40 hover:bg-orange hover:text-white transition-all duration-300"
                   >
-                    <Icon size={14} />
+                    <Icon size={16} />
                   </a>
                 ))}
               </div>
+              <div className="flex gap-2">
+                <a href="#" className="px-4 py-2 bg-white/[0.06] rounded-lg text-[11px] font-display font-semibold text-white/50 hover:bg-white/10 hover:text-white transition-all">
+                  LinkedIn
+                </a>
+                <a href="#" className="px-4 py-2 bg-white/[0.06] rounded-lg text-[11px] font-display font-semibold text-white/50 hover:bg-white/10 hover:text-white transition-all">
+                  WhatsApp
+                </a>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Bottom */}
-      <div className="border-t border-white/10 bg-navy-700">
-        <div className="max-w-[1400px] mx-auto px-8 py-5 text-center text-[11px] text-white/30">
-          &copy; 2025 Vyapaar Global Ltd. All rights reserved. From farm to home
-          — smart sourcing, smart logistics, smart living.
+          {/* Divider */}
+          <div className="mt-12 pt-6 border-t border-white/[0.06]">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              <p className="text-[12px] text-white/25">
+                &copy; 2025 Vyapaar Global Ltd. All rights reserved.
+              </p>
+              <div className="flex items-center gap-6">
+                <Link href="/privacy" className="text-[12px] text-white/25 hover:text-white/50 transition-colors">
+                  Privacy Policy
+                </Link>
+                <Link href="/terms" className="text-[12px] text-white/25 hover:text-white/50 transition-colors">
+                  Terms of Service
+                </Link>
+                <Link href="/cookies" className="text-[12px] text-white/25 hover:text-white/50 transition-colors">
+                  Cookies
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
