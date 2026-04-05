@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, AlertCircle, Leaf } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 
 export default function LoginPage() {
@@ -56,23 +56,31 @@ export default function LoginPage() {
     }
   };
 
+  const inputClass =
+    "block w-full pl-10 pr-3 py-3 bg-cream border border-forest/8 rounded-xl text-bark placeholder:text-bark-400 focus:outline-none focus:border-terra/30 focus:ring-2 focus:ring-terra/8 transition-all duration-300";
+
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 aurora">
-      <div className="max-w-md w-full">
-        <div className="bg-white rounded-2xl p-8 shadow-soft-lg border border-surface-200">
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-warmth">
+      <div className="max-w-md w-full animate-fade-up">
+        <div className="bg-cream-50 rounded-3xl p-8 lg:p-10 shadow-soft-lg border border-forest/5">
           {/* Header */}
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-navy">Welcome Back</h2>
-            <p className="mt-2 text-surface-500">
+            <div className="w-12 h-12 rounded-full bg-forest/[0.06] flex items-center justify-center mx-auto mb-4">
+              <Leaf size={20} className="text-forest-400" />
+            </div>
+            <h2 className="font-display text-3xl font-semibold text-forest italic">
+              Welcome Back
+            </h2>
+            <p className="mt-2 text-bark-400 text-sm">
               Sign in to your Vyapaar Global account
             </p>
           </div>
 
-          {/* Error Message */}
+          {/* Error */}
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start space-x-2">
+            <div className="mb-6 p-4 bg-accent-rose/5 border border-accent-rose/15 rounded-xl flex items-start gap-2">
               <AlertCircle
-                size={20}
+                size={18}
                 className="text-accent-rose mt-0.5 flex-shrink-0"
               />
               <p className="text-sm text-accent-rose">{error}</p>
@@ -80,18 +88,17 @@ export default function LoginPage() {
           )}
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email */}
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-navy/70 mb-2"
+                className="block text-sm font-medium text-bark-600 mb-2"
               >
                 Email Address
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail size={20} className="text-surface-400" />
+                  <Mail size={18} className="text-bark-400" />
                 </div>
                 <input
                   id="email"
@@ -101,23 +108,22 @@ export default function LoginPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  className="block w-full pl-10 pr-3 py-2.5 bg-surface-50 border border-surface-200 rounded-xl text-navy placeholder:text-surface-400 focus:outline-none focus:border-orange/40 focus:ring-2 focus:ring-orange/10 transition-all"
+                  className={inputClass}
                   placeholder="you@example.com"
                 />
               </div>
             </div>
 
-            {/* Password */}
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-navy/70 mb-2"
+                className="block text-sm font-medium text-bark-600 mb-2"
               >
                 Password
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock size={20} className="text-surface-400" />
+                  <Lock size={18} className="text-bark-400" />
                 </div>
                 <input
                   id="password"
@@ -127,51 +133,45 @@ export default function LoginPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, password: e.target.value })
                   }
-                  className="block w-full pl-10 pr-10 py-2.5 bg-surface-50 border border-surface-200 rounded-xl text-navy placeholder:text-surface-400 focus:outline-none focus:border-orange/40 focus:ring-2 focus:ring-orange/10 transition-all"
-                  placeholder="••••••••"
+                  className="block w-full pl-10 pr-10 py-3 bg-cream border border-forest/8 rounded-xl text-bark placeholder:text-bark-400 focus:outline-none focus:border-terra/30 focus:ring-2 focus:ring-terra/8 transition-all duration-300"
+                  placeholder="••••���•••"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-bark-400 hover:text-bark-600"
                 >
-                  {showPassword ? (
-                    <EyeOff size={20} className="text-surface-400" />
-                  ) : (
-                    <Eye size={20} className="text-surface-400" />
-                  )}
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
 
-            {/* Remember Me & Forgot Password */}
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <input
                   id="remember-me"
                   type="checkbox"
-                  className="h-4 w-4 rounded border-surface-300 bg-surface-50"
+                  className="h-4 w-4 rounded border-forest/20 bg-cream accent-forest"
                 />
                 <label
                   htmlFor="remember-me"
-                  className="ml-2 block text-sm text-surface-500"
+                  className="ml-2 block text-sm text-bark-500"
                 >
                   Remember me
                 </label>
               </div>
               <Link
                 href="/auth/forgot-password"
-                className="text-sm text-orange hover:text-orange-dark transition-colors"
+                className="text-sm text-terra hover:text-terra-500 transition-colors font-medium"
               >
                 Forgot password?
               </Link>
             </div>
 
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-navy text-white py-3 rounded-xl font-bold hover:bg-navy-light transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-forest text-cream py-3.5 rounded-full font-semibold hover:bg-forest-400 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? "Signing in..." : "Sign In"}
             </button>
@@ -181,21 +181,21 @@ export default function LoginPage() {
           <div className="mt-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-surface-200" />
+                <div className="w-full border-t border-forest/6" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-surface-400">
+                <span className="px-3 bg-cream-50 text-bark-400 text-xs">
                   Or continue with
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Social Login */}
+          {/* Social */}
           <div className="mt-6 grid grid-cols-2 gap-3">
             <button
               onClick={handleGoogleSignIn}
-              className="flex items-center justify-center px-4 py-2.5 border border-surface-200 rounded-xl hover:bg-surface-50 transition-colors text-surface-500"
+              className="flex items-center justify-center px-4 py-2.5 border border-forest/8 rounded-xl hover:bg-cream hover:border-forest/15 transition-all duration-300 text-bark-600 text-sm"
             >
               <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                 <path
@@ -219,7 +219,7 @@ export default function LoginPage() {
             </button>
             <button
               onClick={handleFacebookSignIn}
-              className="flex items-center justify-center px-4 py-2.5 border border-surface-200 rounded-xl hover:bg-surface-50 transition-colors text-surface-500"
+              className="flex items-center justify-center px-4 py-2.5 border border-forest/8 rounded-xl hover:bg-cream hover:border-forest/15 transition-all duration-300 text-bark-600 text-sm"
             >
               <svg className="w-5 h-5 mr-2" fill="#1877F2" viewBox="0 0 24 24">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
@@ -228,12 +228,12 @@ export default function LoginPage() {
             </button>
           </div>
 
-          {/* Sign Up Link */}
-          <p className="mt-6 text-center text-sm text-surface-500">
+          {/* Sign up link */}
+          <p className="mt-6 text-center text-sm text-bark-400">
             Don&apos;t have an account?{" "}
             <Link
               href="/auth/signup"
-              className="font-medium text-orange hover:text-orange-dark transition-colors"
+              className="font-semibold text-terra hover:text-terra-500 transition-colors"
             >
               Sign up
             </Link>

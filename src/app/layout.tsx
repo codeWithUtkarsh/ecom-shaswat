@@ -19,11 +19,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="font-sans bg-surface-50 text-navy-dark">
+      <body className="font-sans bg-cream text-bark grain">
         <AuthProvider>
           <CartProvider>
             <Header />
-            <main className="min-h-screen">{children}</main>
+            <main>{children}</main>
             <Footer />
           </CartProvider>
         </AuthProvider>

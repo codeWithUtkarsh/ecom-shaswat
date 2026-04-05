@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Heart, Star } from "lucide-react";
+import { Heart, Star, ShoppingCart } from "lucide-react";
 import { Product } from "@/types";
 import { useCart } from "@/lib/cart-context";
 import { useState } from "react";
@@ -14,11 +14,14 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCart();
   const [liked, setLiked] = useState(false);
+  const [addedFeedback, setAddedFeedback] = useState(false);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     addToCart(product);
+    setAddedFeedback(true);
+    setTimeout(() => setAddedFeedback(false), 1200);
   };
 
   const handleLike = (e: React.MouseEvent) => {
@@ -30,10 +33,10 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <Link
       href={`/products/detail/${product.id}`}
-      className="group block bg-white rounded-2xl overflow-hidden shadow-[0_1px_4px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.1)] transition-all duration-500"
+      className="animate-fade-up group block bg-cream-50 rounded-2xl overflow-hidden border border-forest/[0.04] hover:border-terra/15 shadow-card hover:shadow-card-hover transition-all duration-500"
     >
       {/* Image */}
-      <div className="relative aspect-[4/3] bg-surface-50 overflow-hidden">
+      <div className="relative aspect-[4/3] bg-cream-200 overflow-hidden">
         <Image
           src={product.image}
           alt={product.name}
@@ -41,52 +44,77 @@ export default function ProductCard({ product }: ProductCardProps) {
           className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
         />
 
-        {/* Wishlist button — top left */}
+        {/* Badge */}
+        {product.badge && product.badge !== "out" && (
+          <div
+            className={`absolute top-3 right-3 z-10 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+              product.badge === "hot"
+                ? "bg-accent-rose text-white"
+                : product.badge === "new"
+                  ? "bg-forest text-cream"
+                  : "bg-terra text-white"
+            }`}
+          >
+            {product.badge}
+          </div>
+        )}
+
+        {/* Wishlist */}
         <button
           onClick={handleLike}
-          className="absolute top-3 left-3 z-10 w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white hover:scale-110"
+          className={`absolute top-3 left-3 z-10 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 ${
+            liked
+              ? "bg-accent-rose text-white"
+              : "bg-white/80 backdrop-blur-sm text-bark-400 hover:bg-white"
+          }`}
         >
           <Heart
             size={14}
-            className={
-              liked
-                ? "fill-red-500 text-red-500"
-                : "text-surface-400"
-            }
+            className={liked ? "fill-white" : ""}
           />
         </button>
 
         {/* Out of stock */}
         {!product.inStock && (
-          <div className="absolute inset-0 bg-white/50 backdrop-blur-[1px] flex items-center justify-center z-10">
-            <span className="font-display font-medium text-xs text-surface-500 bg-white/90 px-4 py-1.5 rounded-full shadow-sm">
+          <div className="absolute inset-0 bg-cream/60 backdrop-blur-[2px] flex items-center justify-center z-10">
+            <span className="font-display text-xs font-medium text-bark-600 bg-white/90 px-4 py-1.5 rounded-full shadow-sm italic">
               Out of Stock
             </span>
+          </div>
+        )}
+
+        {/* Quick add overlay on hover */}
+        {product.inStock && (
+          <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-10">
+            <button
+              onClick={handleAddToCart}
+              className={`w-full flex items-center justify-center gap-2 py-3 text-xs font-semibold transition-colors duration-200 ${
+                addedFeedback
+                  ? "bg-forest text-cream"
+                  : "bg-terra/90 backdrop-blur-sm text-white hover:bg-terra"
+              }`}
+            >
+              <ShoppingCart size={14} />
+              {addedFeedback ? "Added!" : "Quick Add"}
+            </button>
           </div>
         )}
       </div>
 
       {/* Content */}
-      <div className="p-4 pt-3.5">
-        {/* Name — large, bold, editorial */}
-        <h3 className="font-display text-base font-bold text-navy leading-tight line-clamp-2 min-h-[44px] group-hover:text-orange transition-colors duration-300">
+      <div className="p-4">
+        {/* Vendor */}
+        <p className="text-[10px] text-bark-400 font-medium uppercase tracking-wider mb-1">
+          {product.vendor}
+        </p>
+
+        {/* Name */}
+        <h3 className="font-display text-[15px] font-semibold text-forest leading-snug line-clamp-2 min-h-[40px] group-hover:text-terra transition-colors duration-300 italic">
           {product.name}
         </h3>
 
-        {/* Price row */}
-        <div className="flex items-baseline gap-2 mt-2">
-          <span className="font-display text-lg font-extrabold text-navy tracking-tight">
-            £{product.price.toFixed(2)}
-          </span>
-          {product.originalPrice && (
-            <span className="text-xs text-surface-400 line-through">
-              £{product.originalPrice.toFixed(2)}
-            </span>
-          )}
-        </div>
-
-        {/* Rating + Vendor */}
-        <div className="flex items-center gap-1.5 mt-2 mb-4">
+        {/* Rating */}
+        <div className="flex items-center gap-1 mt-2">
           <div className="flex items-center gap-0.5">
             {[...Array(5)].map((_, i) => (
               <Star
@@ -94,30 +122,53 @@ export default function ProductCard({ product }: ProductCardProps) {
                 size={11}
                 className={
                   i < product.rating
-                    ? "fill-accent-gold text-accent-gold"
-                    : "fill-surface-200 text-surface-200"
+                    ? "fill-gold-400 text-gold-400"
+                    : "fill-bark-100 text-bark-100"
                 }
               />
             ))}
           </div>
-          <span className="text-[11px] text-surface-400">({product.reviews})</span>
-          <span className="text-surface-200 text-[11px]">·</span>
-          <span className="text-[11px] text-surface-400">{product.vendor}</span>
+          <span className="text-[10px] text-bark-400">
+            ({product.reviews})
+          </span>
         </div>
 
-        {/* Add to cart button */}
-        {product.inStock ? (
-          <button
-            onClick={handleAddToCart}
-            className="w-full py-2.5 border-2 border-navy text-navy font-display text-xs font-bold tracking-wider uppercase rounded-xl hover:bg-navy hover:text-white transition-all duration-300 active:scale-[0.98]"
-          >
-            Add to Cart
-          </button>
-        ) : (
-          <div className="w-full py-2.5 border-2 border-surface-200 text-surface-400 font-display text-xs font-bold tracking-wider uppercase rounded-xl text-center cursor-not-allowed">
-            Sold Out
-          </div>
-        )}
+        {/* Price */}
+        <div className="flex items-baseline gap-2 mt-2.5">
+          <span className="font-display text-lg font-bold text-forest tracking-tight">
+            &pound;{product.price.toFixed(2)}
+          </span>
+          {product.originalPrice && (
+            <span className="text-xs text-bark-400 line-through">
+              &pound;{product.originalPrice.toFixed(2)}
+            </span>
+          )}
+          {product.discount && product.discount > 5 && (
+            <span className="text-[10px] font-semibold text-terra bg-terra/8 px-1.5 py-0.5 rounded">
+              -{product.discount}%
+            </span>
+          )}
+        </div>
+
+        {/* Add to cart button (mobile/fallback) */}
+        <div className="mt-3 lg:hidden">
+          {product.inStock ? (
+            <button
+              onClick={handleAddToCart}
+              className={`w-full py-2.5 rounded-xl text-xs font-semibold transition-all duration-300 active:scale-[0.98] ${
+                addedFeedback
+                  ? "bg-terra text-white"
+                  : "border border-terra/20 text-terra hover:bg-terra hover:text-white"
+              }`}
+            >
+              {addedFeedback ? "Added!" : "Add to Cart"}
+            </button>
+          ) : (
+            <div className="w-full py-2.5 border border-bark-200 text-bark-400 text-xs font-semibold rounded-xl text-center cursor-not-allowed">
+              Sold Out
+            </div>
+          )}
+        </div>
       </div>
     </Link>
   );
