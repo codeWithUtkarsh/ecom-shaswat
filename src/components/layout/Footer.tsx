@@ -102,7 +102,7 @@ export default function Footer() {
             {/* Brand column */}
             <div className="col-span-2 md:col-span-3">
               <Image
-                src="/logo.jpg"
+                src="/logo.png"
                 alt="Vyapaar Global"
                 width={140}
                 height={40}

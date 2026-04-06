@@ -36,27 +36,23 @@ export default function FeatureHighlights() {
       </div>
 
       {/* Category grid */}
-      <div className="grid grid-cols-5 md:grid-cols-10 gap-3 stagger-children">
+      <div className="grid grid-cols-3 sm:grid-cols-6 gap-6 lg:gap-8 stagger-children">
         {categories.map((cat) => (
           <Link
             key={cat.id}
             href={`/products/${cat.slug}`}
-            className="animate-fade-up bg-cream-50 border border-forest/5 rounded-2xl p-3 lg:p-4 text-center group hover:shadow-card-hover hover:-translate-y-1.5 hover:border-terra/15 transition-all duration-500"
+            className="animate-fade-up text-center group"
           >
-            <div className="w-14 h-14 lg:w-16 lg:h-16 rounded-full bg-forest/[0.03] mx-auto mb-2.5 overflow-hidden ring-2 ring-forest/6 group-hover:ring-terra/25 transition-all duration-500">
+            <div className="relative w-28 h-28 sm:w-32 sm:h-32 lg:w-36 lg:h-36 mx-auto mb-3 rounded-full bg-forest/[0.03] overflow-clip group-hover:scale-110 transition-transform duration-500">
               <Image
                 src={cat.image}
                 alt={cat.name}
-                width={64}
-                height={64}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                fill
+                className="object-contain scale-[2.5] group-hover:scale-[2.7] transition-transform duration-500"
               />
             </div>
-            <div className="text-[11px] lg:text-xs font-semibold text-forest group-hover:text-terra transition-colors duration-300">
+            <div className="text-sm lg:text-base font-semibold text-forest group-hover:text-terra transition-colors duration-300">
               {cat.name}
-            </div>
-            <div className="text-[9px] lg:text-[10px] text-bark-400 mt-0.5">
-              {cat.item_count} items
             </div>
           </Link>
         ))}

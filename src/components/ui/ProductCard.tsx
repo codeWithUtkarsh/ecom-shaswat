@@ -36,7 +36,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       className="animate-fade-up group block bg-cream-50 rounded-2xl overflow-hidden border border-forest/[0.04] hover:border-terra/15 shadow-card hover:shadow-card-hover transition-all duration-500"
     >
       {/* Image */}
-      <div className="relative aspect-[4/3] bg-cream-200 overflow-hidden">
+      <div className="relative aspect-[4/3] overflow-hidden">
         <Image
           src={product.image}
           alt={product.name}

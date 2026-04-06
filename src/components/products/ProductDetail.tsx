@@ -33,7 +33,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14">
       {/* Image */}
       <div>
-        <div className="relative aspect-square lg:aspect-[4/5] bg-cream-200 rounded-3xl overflow-hidden border border-forest/5">
+        <div className="relative aspect-square lg:aspect-[4/5] rounded-3xl overflow-hidden border border-forest/5">
           <Image
             src={product.image}
             alt={product.name}

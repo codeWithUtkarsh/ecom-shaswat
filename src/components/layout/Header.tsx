@@ -95,10 +95,10 @@ export default function Header() {
             {showMobileMenu ? <X size={20} /> : <Menu size={20} />}
           </button>
 
-          {/* Logo */}
-          <Link href="/" className="flex-shrink-0">
+          {/* Logo + Brand Name */}
+          <Link href="/" className="flex items-center gap-2 flex-shrink-0">
             <Image
-              src="/logo.jpg"
+              src="/logo.png"
               alt="Vyapaar Global"
               width={200}
               height={50}
@@ -106,6 +106,15 @@ export default function Header() {
                 isTransparent ? "brightness-0 invert" : ""
               }`}
               priority
+            />
+            <Image
+              src="/brand-name.png"
+              alt="Vyapaar Global"
+              width={160}
+              height={40}
+              className={`h-6 lg:h-7 w-auto object-contain transition-all duration-300 ${
+                isTransparent ? "brightness-0 invert" : ""
+              }`}
             />
           </Link>
 

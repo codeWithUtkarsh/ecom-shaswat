@@ -22,30 +22,30 @@ import {
 const slides = [
   {
     image:
-      "https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=1600&h=900&fit=crop",
-    subtitle: "Farm Fresh Produce",
-    title: "Simply Delicious",
-    desc: "We supply premium quality organic products direct to UK retailers.",
-    cta: "Shop Now",
-    link: "/products/vegetable",
+      "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=1600&h=900&fit=crop",
+    subtitle: "Premium Indian Spices",
+    title: "Aromatic Spices",
+    desc: "Cumin, cardamom, pepper & more — 98%+ purity, export grade.",
+    cta: "Browse Spices",
+    link: "/products/whole-spices",
   },
   {
     image:
-      "https://images.unsplash.com/photo-1542838132-92c53300491e?w=1600&h=900&fit=crop",
-    subtitle: "Globally Sourced",
-    title: "Nature's Finest",
-    desc: "Smart sourcing from verified farms with competitive wholesale pricing.",
-    cta: "Explore Products",
-    link: "/products/organic",
+      "https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=1600&h=900&fit=crop",
+    subtitle: "Wholesale Lentils & Pulses",
+    title: "Bulk Supply",
+    desc: "Toor dal, masoor dal, rajma & chickpeas — machine cleaned, sortex graded.",
+    cta: "View Pulses",
+    link: "/products/lentils-pulses",
   },
   {
     image:
-      "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=1600&h=900&fit=crop",
-    subtitle: "Reliable Supply Chain",
-    title: "Fast Delivery",
-    desc: "Doorstep delivery across the UK. Free shipping on orders over £500.",
-    cta: "Get Started",
-    link: "/products/fruits",
+      "https://images.unsplash.com/photo-1607672632458-9eb56696346a?w=1600&h=900&fit=crop",
+    subtitle: "Branded Ready Mixes",
+    title: "MTR & Tata Sampann",
+    desc: "Trusted Indian brands now available in bulk for UK retailers.",
+    cta: "Shop Brands",
+    link: "/products/blended-spices",
   },
 ];
 
@@ -349,22 +349,22 @@ export default function HeroBanner() {
                 >
                   <Link
                     href={`/products/${cat.slug}`}
-                    className="flex flex-col items-center gap-1.5 py-3 hover:bg-forest/[0.03] transition-colors group"
+                    className="flex flex-col items-center gap-0 py-1 hover:bg-forest/[0.03] transition-colors group"
                   >
                     <motion.div
-                      className="w-11 h-11 lg:w-12 lg:h-12 overflow-hidden bg-cream-200"
+                      className="w-16 h-8 sm:w-20 sm:h-10 lg:w-24 lg:h-12"
                       whileHover={{ scale: 1.1 }}
                       transition={snappySpring}
                     >
                       <Image
                         src={cat.image}
                         alt={cat.name}
-                        width={48}
-                        height={48}
-                        className="w-full h-full object-cover"
+                        width={192}
+                        height={40}
+                        className="w-full h-full object-contain"
                       />
                     </motion.div>
-                    <span className="text-[10px] lg:text-[11px] font-semibold text-forest/70 group-hover:text-terra transition-colors whitespace-nowrap">
+                    <span className="text-[10px] lg:text-xs font-semibold text-forest/70 group-hover:text-terra transition-colors whitespace-nowrap">
                       {cat.name}
                     </span>
                   </Link>
@@ -388,7 +388,7 @@ export default function HeroBanner() {
             transition={{ ...smoothSpring, delay: 0.1 }}
           >
             <Link
-              href="/products/vegetable"
+              href="/products/grains"
               className="relative overflow-hidden h-[200px] lg:h-[220px] group border border-forest/5 hover:shadow-card-hover transition-shadow duration-500 block"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-forest-50 via-forest-50/90 to-transparent z-[1]" />
@@ -398,21 +398,21 @@ export default function HeroBanner() {
                 transition={{ duration: 0.6 }}
               >
                 <Image
-                  src="https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&h=400&fit=crop"
-                  alt="Fresh vegetables"
+                  src="https://images.unsplash.com/photo-1586201375761-83865001e31c?w=600&h=400&fit=crop"
+                  alt="Grains and flour"
                   fill
                   className="object-cover"
                 />
               </motion.div>
               <div className="relative z-[2] p-6 lg:p-8 flex flex-col justify-center h-full">
                 <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-forest-300 mb-1">
-                  Vegetables
+                  Grains & Flours
                 </span>
                 <h3 className="font-display text-2xl lg:text-3xl font-bold text-forest italic leading-tight mb-2">
-                  Green World
+                  Premium Staples
                 </h3>
                 <p className="text-bark-500 text-xs mb-4">
-                  Get 40% off on selected farm produce
+                  Basmati rice, atta, besan & millet flours in bulk
                 </p>
                 <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-terra group-hover:gap-2.5 transition-all duration-300">
                   Learn More <ArrowRight size={13} />
@@ -428,7 +428,7 @@ export default function HeroBanner() {
             transition={{ ...smoothSpring, delay: 0.2 }}
           >
             <Link
-              href="/products/fruits"
+              href="/products/whole-spices"
               className="relative overflow-hidden h-[200px] lg:h-[220px] group border border-forest/5 hover:shadow-card-hover transition-shadow duration-500 block"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-terra-50 via-terra-50/90 to-transparent z-[1]" />
@@ -438,21 +438,21 @@ export default function HeroBanner() {
                 transition={{ duration: 0.6 }}
               >
                 <Image
-                  src="https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=600&h=400&fit=crop"
-                  alt="Fresh fruits"
+                  src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=600&h=400&fit=crop"
+                  alt="Whole spices"
                   fill
                   className="object-cover"
                 />
               </motion.div>
               <div className="relative z-[2] p-6 lg:p-8 flex flex-col justify-center h-full">
                 <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-terra mb-1">
-                  Fresh Fruits
+                  Whole Spices
                 </span>
                 <h3 className="font-display text-2xl lg:text-3xl font-bold text-forest italic leading-tight mb-2">
-                  Healthy Food
+                  Aromatic Spices
                 </h3>
                 <p className="text-bark-500 text-xs mb-4">
-                  Get 25% off on organic fruit selections
+                  Cumin, cardamom, pepper & more — 98%+ purity
                 </p>
                 <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-terra group-hover:gap-2.5 transition-all duration-300">
                   Learn More <ArrowRight size={13} />

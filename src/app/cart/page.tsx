@@ -55,7 +55,7 @@ export default function CartPage() {
               key={item.product.id}
               className="bg-cream-50 border border-forest/5 rounded-2xl p-5 lg:p-6 flex items-center gap-4 hover:border-forest/10 transition-all duration-300"
             >
-              <div className="relative w-20 h-20 lg:w-24 lg:h-24 flex-shrink-0 rounded-xl overflow-hidden bg-cream-200">
+              <div className="relative w-20 h-20 lg:w-24 lg:h-24 flex-shrink-0 rounded-xl overflow-hidden">
                 <Image
                   src={item.product.image}
                   alt={item.product.name}
