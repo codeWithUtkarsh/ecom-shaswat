@@ -135,10 +135,16 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {/* Price */}
         <div className="flex items-baseline gap-2 mt-2.5">
-          <span className="font-display text-lg font-bold text-forest tracking-tight">
-            &pound;{product.price.toFixed(2)}
-          </span>
-          {product.original_price && (
+          {product.price != null ? (
+            <span className="font-display text-lg font-bold text-forest tracking-tight">
+              &pound;{product.price.toFixed(2)}
+            </span>
+          ) : (
+            <span className="font-display text-sm font-semibold text-terra">
+              Price on request
+            </span>
+          )}
+          {product.original_price != null && (
             <span className="text-xs text-bark-400 line-through">
               &pound;{product.original_price.toFixed(2)}
             </span>

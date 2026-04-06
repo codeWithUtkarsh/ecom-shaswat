@@ -40,7 +40,7 @@ const slides = [
   },
   {
     image:
-      "https://images.unsplash.com/photo-1506484381205-f7945b68db56?w=1600&h=900&fit=crop",
+      "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=1600&h=900&fit=crop",
     subtitle: "Reliable Supply Chain",
     title: "Fast Delivery",
     desc: "Doorstep delivery across the UK. Free shipping on orders over £500.",

@@ -90,10 +90,16 @@ export default function ProductDetail({ product }: ProductDetailProps) {
         {/* Price */}
         <div className="mt-6 pb-6 border-b border-forest/6">
           <div className="flex items-baseline gap-3">
-            <span className="font-display text-4xl font-bold text-forest italic">
-              &pound;{product.price.toFixed(2)}
-            </span>
-            {product.original_price && (
+            {product.price != null ? (
+              <span className="font-display text-4xl font-bold text-forest italic">
+                &pound;{product.price.toFixed(2)}
+              </span>
+            ) : (
+              <span className="font-display text-2xl font-bold text-terra italic">
+                Price on request
+              </span>
+            )}
+            {product.original_price != null && (
               <>
                 <span className="text-lg text-bark-400 line-through">
                   &pound;{product.original_price.toFixed(2)}

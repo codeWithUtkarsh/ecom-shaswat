@@ -75,7 +75,7 @@ export default function CartPage() {
                   {item.product.category_label}
                 </p>
                 <p className="text-terra font-semibold mt-1.5 text-sm">
-                  &pound;{item.product.price.toFixed(2)}
+                  {item.product.price != null ? `£${item.product.price.toFixed(2)}` : 'Price on request'}
                 </p>
               </div>
 
@@ -103,7 +103,7 @@ export default function CartPage() {
 
               <div className="text-right flex-shrink-0">
                 <p className="font-display text-lg font-bold text-forest">
-                  &pound;{(item.product.price * item.quantity).toFixed(2)}
+                  {item.product.price != null ? `£${(item.product.price * item.quantity).toFixed(2)}` : '—'}
                 </p>
                 <button
                   onClick={() => removeFromCart(item.product.id)}
