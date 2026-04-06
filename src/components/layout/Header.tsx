@@ -15,8 +15,9 @@ import {
 import { useCart } from "@/lib/cart-context";
 import { useAuth } from "@/lib/auth-context";
 import { useState, useRef, useEffect } from "react";
-import { categories } from "@/lib/data";
 import { usePathname } from "next/navigation";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
 export default function Header() {
   const { getTotalItems, getTotalPrice } = useCart();
@@ -27,10 +28,18 @@ export default function Header() {
   const [showCategories, setShowCategories] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [categories, setCategories] = useState<any[]>([]);
   const menuRef = useRef<HTMLDivElement>(null);
   const catRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const isHome = pathname === "/";
+
+  useEffect(() => {
+    fetch(`${API_BASE}/categories`)
+      .then((r) => r.json())
+      .then((d) => setCategories(d.data?.categories ?? []))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -155,7 +164,7 @@ export default function Header() {
                       <span className="text-base">{cat.icon}</span>
                       <span className="font-semibold">{cat.name}</span>
                       <span className="ml-auto text-[10px] text-forest/40 bg-forest/5 px-2 py-0.5">
-                        {cat.itemCount}
+                        {cat.item_count}
                       </span>
                     </Link>
                   ))}

@@ -1,0 +1,63 @@
+[   10768ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://familyid.up.gov.in/favicon.ico:0
+[   20619ms] TypeError: Cannot read properties of null (reading 'addEventListener')
+    at https://familyid.up.gov.in/portal/Home_en.aspx:1103:65
+[   27844ms] TypeError: Cannot read properties of null (reading 'addEventListener')
+    at https://familyid.up.gov.in/portal/signin.aspx:765:62
+[   28526ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://familyid.up.gov.in/portal/assets/css/webfonts/fa-solid-900.woff2:0
+[   28679ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://familyid.up.gov.in/portal/assets/css/webfonts/fa-solid-900.ttf:0
+[   29864ms] [LOG] null @ https://img1.digitallocker.gov.in/ux4g/UX4G-CDN-accessibility/js/weights-v1.js:336
+[   29868ms] [WARNING] jQuery.Deferred exception: adjustBottom is not defined ReferenceError: adjustBottom is not defined
+    at HTMLDocument.<anonymous> (https://familyid.up.gov.in/portal/assets/js/main.js:5:5)
+    at e (https://familyid.up.gov.in/portal/assets/js/js1/jquery.slim.min.js:2:30211)
+    at t (https://familyid.up.gov.in/portal/assets/js/js1/jquery.slim.min.js:2:30513) undefined @ https://familyid.up.gov.in/portal/assets/js/js1/jquery.slim.min.js:1
+[   29868ms] ReferenceError: adjustBottom is not defined
+    at HTMLDocument.<anonymous> (https://familyid.up.gov.in/portal/assets/js/main.js:5:5)
+    at e (https://familyid.up.gov.in/portal/assets/js/js1/jquery.slim.min.js:2:30211)
+    at t (https://familyid.up.gov.in/portal/assets/js/js1/jquery.slim.min.js:2:30513)
+[  128874ms] TypeError: Cannot read properties of null (reading 'addEventListener')
+    at https://familyid.up.gov.in/portal/signin.aspx:746:62
+[  128897ms] [LOG] null @ https://img1.digitallocker.gov.in/ux4g/UX4G-CDN-accessibility/js/weights-v1.js:336
+[  128898ms] [WARNING] jQuery.Deferred exception: adjustBottom is not defined ReferenceError: adjustBottom is not defined
+    at HTMLDocument.<anonymous> (https://familyid.up.gov.in/portal/assets/js/main.js:5:5)
+    at e (https://familyid.up.gov.in/portal/assets/js/js1/jquery.slim.min.js:2:30211)
+    at t (https://familyid.up.gov.in/portal/assets/js/js1/jquery.slim.min.js:2:30513) undefined @ https://familyid.up.gov.in/portal/assets/js/js1/jquery.slim.min.js:1
+[  128898ms] ReferenceError: adjustBottom is not defined
+    at HTMLDocument.<anonymous> (https://familyid.up.gov.in/portal/assets/js/main.js:5:5)
+    at e (https://familyid.up.gov.in/portal/assets/js/js1/jquery.slim.min.js:2:30211)
+    at t (https://familyid.up.gov.in/portal/assets/js/js1/jquery.slim.min.js:2:30513)
+[  129058ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://familyid.up.gov.in/portal/assets/css/webfonts/fa-solid-900.woff2:0
+[  129185ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://familyid.up.gov.in/portal/assets/css/webfonts/fa-solid-900.ttf:0
+[  153756ms] TypeError: Cannot read properties of null (reading 'addEventListener')
+    at https://familyid.up.gov.in/portal/signin.aspx:810:62
+[  153771ms] [LOG] null @ https://img1.digitallocker.gov.in/ux4g/UX4G-CDN-accessibility/js/weights-v1.js:336
+[  153772ms] [WARNING] jQuery.Deferred exception: adjustBottom is not defined ReferenceError: adjustBottom is not defined
+    at HTMLDocument.<anonymous> (https://familyid.up.gov.in/portal/assets/js/main.js:5:5)
+    at e (https://familyid.up.gov.in/portal/assets/js/js1/jquery.slim.min.js:2:30211)
+    at t (https://familyid.up.gov.in/portal/assets/js/js1/jquery.slim.min.js:2:30513) undefined @ https://familyid.up.gov.in/portal/assets/js/js1/jquery.slim.min.js:1
+[  153775ms] ReferenceError: adjustBottom is not defined
+    at HTMLDocument.<anonymous> (https://familyid.up.gov.in/portal/assets/js/main.js:5:5)
+    at e (https://familyid.up.gov.in/portal/assets/js/js1/jquery.slim.min.js:2:30211)
+    at t (https://familyid.up.gov.in/portal/assets/js/js1/jquery.slim.min.js:2:30513)
+[  153917ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://familyid.up.gov.in/portal/assets/css/webfonts/fa-solid-900.woff2:0
+[  154043ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://familyid.up.gov.in/portal/assets/css/webfonts/fa-solid-900.ttf:0
+[  177464ms] TypeError: Cannot read properties of null (reading 'addEventListener')
+    at https://familyid.up.gov.in/portal/signin.aspx:810:62
+[  177614ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://familyid.up.gov.in/portal/assets/css/webfonts/fa-solid-900.woff2:0
+[  177744ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://familyid.up.gov.in/portal/assets/css/webfonts/fa-solid-900.ttf:0
+[  182088ms] TypeError: Cannot read properties of undefined (reading 'classList')
+    at https://familyid.up.gov.in/dist/js/demo.js:590:24
+    at https://familyid.up.gov.in/dist/js/demo.js:686:3
+[  205164ms] TypeError: Cannot read properties of undefined (reading 'classList')
+    at https://familyid.up.gov.in/dist/js/demo.js:590:24
+    at https://familyid.up.gov.in/dist/js/demo.js:686:3
+[  210526ms] TypeError: Cannot read properties of undefined (reading 'classList')
+    at https://familyid.up.gov.in/dist/js/demo.js:590:24
+    at https://familyid.up.gov.in/dist/js/demo.js:686:3
+[  226451ms] TypeError: Cannot read properties of undefined (reading 'classList')
+    at https://familyid.up.gov.in/dist/js/demo.js:590:24
+    at https://familyid.up.gov.in/dist/js/demo.js:686:3
+[  226459ms] ReferenceError: avtiveDesiredTab is not defined
+    at https://familyid.up.gov.in/Pages/CBD/MiddleAadhaar.aspx:643:1
+[  236404ms] TypeError: Cannot read properties of undefined (reading 'classList')
+    at https://familyid.up.gov.in/dist/js/demo.js:590:24
+    at https://familyid.up.gov.in/dist/js/demo.js:686:3

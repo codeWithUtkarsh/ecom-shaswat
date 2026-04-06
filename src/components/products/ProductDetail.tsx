@@ -52,7 +52,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
       <div className="flex flex-col">
         {/* Breadcrumb hint */}
         <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-terra mb-3">
-          {product.categoryLabel}
+          {product.category_label}
         </p>
 
         <h1 className="font-display text-3xl lg:text-4xl font-bold text-forest leading-tight italic">
@@ -93,10 +93,10 @@ export default function ProductDetail({ product }: ProductDetailProps) {
             <span className="font-display text-4xl font-bold text-forest italic">
               &pound;{product.price.toFixed(2)}
             </span>
-            {product.originalPrice && (
+            {product.original_price && (
               <>
                 <span className="text-lg text-bark-400 line-through">
-                  &pound;{product.originalPrice.toFixed(2)}
+                  &pound;{product.original_price.toFixed(2)}
                 </span>
                 <span className="text-terra font-semibold bg-terra/8 px-2.5 py-1 rounded-lg text-sm">
                   Save {product.discount}%
@@ -118,15 +118,15 @@ export default function ProductDetail({ product }: ProductDetailProps) {
         <div className="mt-5">
           <span
             className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium ${
-              product.inStock
+              product.in_stock
                 ? "bg-forest/[0.06] border border-forest/10 text-forest"
                 : "bg-accent-rose/8 border border-accent-rose/15 text-accent-rose"
             }`}
           >
             <span
-              className={`w-1.5 h-1.5 rounded-full ${product.inStock ? "bg-forest-400" : "bg-accent-rose"}`}
+              className={`w-1.5 h-1.5 rounded-full ${product.in_stock ? "bg-forest-400" : "bg-accent-rose"}`}
             />
-            {product.inStock ? "In Stock" : "Out of Stock"}
+            {product.in_stock ? "In Stock" : "Out of Stock"}
           </span>
         </div>
 
@@ -134,7 +134,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
         <div className="flex items-center gap-3 mt-8">
           <button
             onClick={handleAddToCart}
-            disabled={!product.inStock}
+            disabled={!product.in_stock}
             className={`flex-1 py-4 rounded-full font-semibold text-sm flex items-center justify-center gap-2.5 transition-all duration-300 disabled:bg-bark-100 disabled:text-bark-400 disabled:cursor-not-allowed ${
               addedFeedback
                 ? "bg-forest text-cream"

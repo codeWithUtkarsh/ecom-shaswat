@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import ProductCard from "@/components/ui/ProductCard";
-import { products, categories } from "@/lib/data";
+import { api } from "@/lib/api";
 
 interface PageProps {
   params: Promise<{
@@ -11,13 +11,16 @@ interface PageProps {
 
 export default async function CategoryPage({ params }: PageProps) {
   const { category: categorySlug } = await params;
-  const category = categories.find((c) => c.slug === categorySlug);
 
-  if (!category) {
+  let data;
+  try {
+    data = await api.categories.get(categorySlug);
+  } catch {
     notFound();
   }
 
-  const categoryProducts = products.filter((p) => p.category === categorySlug);
+  const category = data.category;
+  const categoryProducts = data.products;
 
   return (
     <div className="max-w-[1400px] mx-auto px-6 lg:px-8 py-8 lg:py-10 bg-warmth">

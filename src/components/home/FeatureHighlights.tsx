@@ -1,10 +1,20 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { categories } from "@/lib/data";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
 export default function FeatureHighlights() {
+  const [categories, setCategories] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch(`${API_BASE}/categories`)
+      .then((r) => r.json())
+      .then((d) => setCategories(d.data?.categories ?? []))
+      .catch(() => {});
+  }, []);
   return (
     <div className="max-w-[1400px] mx-auto px-6 lg:px-8 mt-12 lg:mt-16">
       {/* Section header */}
@@ -46,7 +56,7 @@ export default function FeatureHighlights() {
               {cat.name}
             </div>
             <div className="text-[9px] lg:text-[10px] text-bark-400 mt-0.5">
-              {cat.itemCount} items
+              {cat.item_count} items
             </div>
           </Link>
         ))}

@@ -1,12 +1,21 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { products } from "@/lib/data";
 import ProductCard from "@/components/ui/ProductCard";
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+
 export default function YouMightNeed() {
-  const moreProducts = products.slice(10, 20);
+  const [moreProducts, setMoreProducts] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch(`${API_BASE}/products?limit=10&page=2`)
+      .then((r) => r.json())
+      .then((d) => setMoreProducts(d.data?.products ?? []))
+      .catch(() => {});
+  }, []);
 
   if (moreProducts.length === 0) return null;
 

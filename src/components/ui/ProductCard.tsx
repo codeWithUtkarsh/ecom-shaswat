@@ -75,7 +75,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         </button>
 
         {/* Out of stock */}
-        {!product.inStock && (
+        {!product.in_stock && (
           <div className="absolute inset-0 bg-cream/60 backdrop-blur-[2px] flex items-center justify-center z-10">
             <span className="font-display text-xs font-medium text-bark-600 bg-white/90 px-4 py-1.5 rounded-full shadow-sm italic">
               Out of Stock
@@ -84,7 +84,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         )}
 
         {/* Quick add overlay on hover */}
-        {product.inStock && (
+        {product.in_stock && (
           <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-10">
             <button
               onClick={handleAddToCart}
@@ -138,9 +138,9 @@ export default function ProductCard({ product }: ProductCardProps) {
           <span className="font-display text-lg font-bold text-forest tracking-tight">
             &pound;{product.price.toFixed(2)}
           </span>
-          {product.originalPrice && (
+          {product.original_price && (
             <span className="text-xs text-bark-400 line-through">
-              &pound;{product.originalPrice.toFixed(2)}
+              &pound;{product.original_price.toFixed(2)}
             </span>
           )}
           {product.discount && product.discount > 5 && (
@@ -152,7 +152,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {/* Add to cart button (mobile/fallback) */}
         <div className="mt-3 lg:hidden">
-          {product.inStock ? (
+          {product.in_stock ? (
             <button
               onClick={handleAddToCart}
               className={`w-full py-2.5 rounded-xl text-xs font-semibold transition-all duration-300 active:scale-[0.98] ${

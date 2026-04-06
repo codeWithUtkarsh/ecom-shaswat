@@ -72,7 +72,7 @@ export default function CartPage() {
                   {item.product.name}
                 </Link>
                 <p className="text-bark-400 text-xs mt-0.5">
-                  {item.product.categoryLabel}
+                  {item.product.category_label}
                 </p>
                 <p className="text-terra font-semibold mt-1.5 text-sm">
                   &pound;{item.product.price.toFixed(2)}

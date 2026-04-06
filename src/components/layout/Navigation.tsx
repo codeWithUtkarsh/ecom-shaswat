@@ -1,12 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronDown, Grid3X3, Flame, Sparkles } from "lucide-react";
-import { categories } from "@/lib/data";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
 export default function Navigation() {
   const [showCategories, setShowCategories] = useState(false);
+  const [categories, setCategories] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch(`${API_BASE}/categories`)
+      .then((r) => r.json())
+      .then((d) => setCategories(d.data?.categories ?? []))
+      .catch(() => {});
+  }, []);
 
   return (
     <nav className="bg-white/80 backdrop-blur-md border-b border-surface-200 sticky top-[64px] z-40">
@@ -37,7 +46,7 @@ export default function Navigation() {
                     <span className="text-base">{cat.icon}</span>
                     <span>{cat.name}</span>
                     <span className="ml-auto text-[10px] text-surface-400">
-                      {cat.itemCount}
+                      {cat.item_count}
                     </span>
                   </Link>
                 ))}

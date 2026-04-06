@@ -11,7 +11,6 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { categories } from "@/lib/data";
 import {
   motion,
   AnimatePresence,
@@ -93,9 +92,19 @@ const scaleIn = {
   },
 };
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+
 export default function HeroBanner() {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
+  const [categories, setCategories] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch(`${API_BASE}/categories`)
+      .then((r) => r.json())
+      .then((d) => setCategories(d.data?.categories ?? []))
+      .catch(() => {});
+  }, []);
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -329,17 +338,18 @@ export default function HeroBanner() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ ...smoothSpring, delay: 0.4 }}
           >
-            <div className="flex items-center overflow-x-auto scrollbar-hide">
+            <div className="flex items-center justify-between overflow-x-auto scrollbar-hide">
               {categories.map((cat, i) => (
                 <motion.div
                   key={cat.id}
+                  className="flex-1 min-w-0"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ ...smoothSpring, delay: 0.5 + i * 0.04 }}
                 >
                   <Link
                     href={`/products/${cat.slug}`}
-                    className="flex flex-col items-center gap-1.5 px-4 lg:px-5 py-3 hover:bg-forest/[0.03] transition-colors group flex-shrink-0"
+                    className="flex flex-col items-center gap-1.5 py-3 hover:bg-forest/[0.03] transition-colors group"
                   >
                     <motion.div
                       className="w-11 h-11 lg:w-12 lg:h-12 overflow-hidden bg-cream-200"

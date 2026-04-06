@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { products } from "@/lib/data";
+import { api } from "@/lib/api";
 import ProductCard from "@/components/ui/ProductCard";
 import ProductDetail from "@/components/products/ProductDetail";
 
@@ -12,15 +12,16 @@ interface PageProps {
 
 export default async function ProductDetailPage({ params }: PageProps) {
   const { id } = await params;
-  const product = products.find((p) => p.id === id);
 
-  if (!product) {
+  let data;
+  try {
+    data = await api.products.get(id);
+  } catch {
     notFound();
   }
 
-  const relatedProducts = products
-    .filter((p) => p.category === product.category && p.id !== product.id)
-    .slice(0, 5);
+  const product = data.product;
+  const relatedProducts = data.relatedProducts;
 
   return (
     <div className="max-w-[1400px] mx-auto px-6 lg:px-8 py-8 lg:py-10 bg-warmth">
@@ -34,7 +35,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
           href={`/products/${product.category}`}
           className="hover:text-forest transition-colors"
         >
-          {product.categoryLabel}
+          {product.category_label}
         </Link>
         <span>/</span>
         <span className="text-forest font-medium line-clamp-1">

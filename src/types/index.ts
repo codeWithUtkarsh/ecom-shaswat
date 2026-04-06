@@ -2,18 +2,18 @@ export interface Product {
   id: string;
   name: string;
   price: number;
-  originalPrice?: number;
+  original_price?: number;
   discount?: number;
   image: string;
   category: string;
-  categoryLabel: string;
+  category_label: string;
   description: string;
   weight?: string;
   rating: number;
   reviews: number;
   vendor: string;
   badge?: "hot" | "new" | "sale" | "out";
-  inStock: boolean;
+  in_stock: boolean;
 }
 
 export interface CartItem {
@@ -27,7 +27,7 @@ export interface Category {
   slug: string;
   image: string;
   icon: string;
-  itemCount: number;
+  item_count: number;
   subcategories?: string[];
 }
 

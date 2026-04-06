@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { products } from "@/lib/data";
+import { useState, useEffect } from "react";
 import ProductCard from "@/components/ui/ProductCard";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
 const tabs = [
   { id: "all", name: "All" },
@@ -15,11 +16,19 @@ const tabs = [
 
 export default function CategoryBrowser() {
   const [activeTab, setActiveTab] = useState("all");
+  const [allProducts, setAllProducts] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch(`${API_BASE}/products?limit=20`)
+      .then((r) => r.json())
+      .then((d) => setAllProducts(d.data?.products ?? []))
+      .catch(() => {});
+  }, []);
 
   const filteredProducts =
     activeTab === "all"
-      ? products.slice(0, 10)
-      : products.filter((p) => p.category === activeTab).slice(0, 10);
+      ? allProducts.slice(0, 10)
+      : allProducts.filter((p: any) => p.category === activeTab).slice(0, 10);
 
   return (
     <div className="max-w-[1400px] mx-auto px-6 lg:px-8 mt-12 lg:mt-16">
