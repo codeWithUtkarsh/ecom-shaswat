@@ -330,45 +330,39 @@ export default function HeroBanner() {
       </motion.section>
 
       {/* ── Category strip — overlaps hero bottom edge ── */}
-      <div className="relative z-10 -mt-12 lg:-mt-14">
+      <div className="relative z-10 -mt-4 lg:-mt-5">
         <div className="max-w-[1400px] mx-auto px-4 lg:px-8">
           <motion.div
-            className="bg-white/95 backdrop-blur-md border border-white/60 shadow-soft-lg"
+            className="bg-white/95 backdrop-blur-md border border-white/60 shadow-soft-lg overflow-hidden"
             initial={{ y: 40, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ ...smoothSpring, delay: 0.4 }}
           >
-            <div className="flex items-center justify-between overflow-x-auto scrollbar-hide">
-              {categories.map((cat, i) => (
-                <motion.div
-                  key={cat.id}
-                  className="flex-1 min-w-0"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ ...smoothSpring, delay: 0.5 + i * 0.04 }}
+            <div className="flex py-2 marquee-left">
+              {/* Repeat categories enough times so each half always exceeds viewport width */}
+              {[...categories, ...categories, ...categories, ...categories].map((cat, i) => (
+                <Link
+                  key={`${cat.id}-${i}`}
+                  href={`/products/${cat.slug}`}
+                  className="flex flex-col items-center gap-0.5 px-6 sm:px-8 shrink-0 hover:bg-forest/[0.03] transition-colors group"
                 >
-                  <Link
-                    href={`/products/${cat.slug}`}
-                    className="flex flex-col items-center gap-0 py-1 hover:bg-forest/[0.03] transition-colors group"
+                  <motion.div
+                    className="w-10 h-5 sm:w-12 sm:h-6 lg:w-14 lg:h-7"
+                    whileHover={{ scale: 1.1 }}
+                    transition={snappySpring}
                   >
-                    <motion.div
-                      className="w-16 h-8 sm:w-20 sm:h-10 lg:w-24 lg:h-12"
-                      whileHover={{ scale: 1.1 }}
-                      transition={snappySpring}
-                    >
-                      <Image
-                        src={cat.image}
-                        alt={cat.name}
-                        width={192}
-                        height={40}
-                        className="w-full h-full object-contain"
-                      />
-                    </motion.div>
-                    <span className="text-[10px] lg:text-xs font-semibold text-forest/70 group-hover:text-terra transition-colors whitespace-nowrap">
-                      {cat.name}
-                    </span>
-                  </Link>
-                </motion.div>
+                    <Image
+                      src={cat.image}
+                      alt={cat.name}
+                      width={112}
+                      height={28}
+                      className="w-full h-full object-contain"
+                    />
+                  </motion.div>
+                  <span className="text-[9px] lg:text-[11px] font-semibold text-forest/70 group-hover:text-terra transition-colors whitespace-nowrap">
+                    {cat.name}
+                  </span>
+                </Link>
               ))}
             </div>
           </motion.div>
