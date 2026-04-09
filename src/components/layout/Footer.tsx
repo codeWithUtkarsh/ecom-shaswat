@@ -8,8 +8,6 @@ import {
   Mail,
   Phone,
   MapPin,
-  Send,
-  Leaf,
 } from "lucide-react";
 
 const footerLinks = [
@@ -36,11 +34,12 @@ const footerLinks = [
   {
     title: "Categories",
     links: [
-      ["Vegetables", "/products/vegetable"],
-      ["Fresh Fruits", "/products/fruits"],
-      ["Spices & Herbs", "/products/spices"],
-      ["Dairy & Milk", "/products/cake-milk"],
-      ["Grains & Rice", "/products/grains"],
+      ["Grains", "/products/grains"],
+      ["Flours", "/products/flours"],
+      ["Lentils & Pulses", "/products/lentils-pulses"],
+      ["Whole Spices", "/products/whole-spices"],
+      ["Blended Spices", "/products/blended-spices"],
+      ["Ready Mixes", "/products/ready-mixes"],
     ],
   },
 ];
@@ -54,50 +53,13 @@ const socials = [
 
 export default function Footer() {
   return (
-    <footer className="relative mt-16">
-      {/* Wave divider */}
-      <div className="h-10 bg-cream relative overflow-hidden">
-        <svg
-          viewBox="0 0 1200 40"
-          className="absolute bottom-0 w-full h-10 text-forest-900"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M0 20 Q300 0 600 20 Q900 40 1200 20 L1200 40 L0 40Z"
-            fill="currentColor"
-          />
-        </svg>
-      </div>
+    <footer className="relative">
+      {/* Seamless transition from CTA section */}
+      <div className="h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
 
       {/* Main footer */}
-      <div className="bg-forest-900">
+      <div className="bg-[#050505]">
         <div className="max-w-[1400px] mx-auto px-8 pt-12 pb-10">
-          {/* Newsletter row */}
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-12 mb-12 border-b border-white/[0.06]">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <Leaf size={16} className="text-sage-400" />
-                <h3 className="font-display text-xl font-semibold text-white italic">
-                  Stay in the loop
-                </h3>
-              </div>
-              <p className="text-white/35 text-sm">
-                Get wholesale pricing, new product alerts & supply chain updates.
-              </p>
-            </div>
-            <div className="flex w-full max-w-md">
-              <input
-                type="email"
-                placeholder="Your business email..."
-                className="flex-1 px-5 py-3 bg-white/[0.05] border border-white/10 rounded-l-xl text-sm text-white placeholder:text-white/25 focus:outline-none focus:bg-white/[0.08] focus:border-white/20 transition-all"
-              />
-              <button className="bg-terra text-white px-6 py-3 rounded-r-xl font-semibold text-sm hover:bg-terra-500 transition-all flex items-center gap-2">
-                Subscribe
-                <Send size={14} />
-              </button>
-            </div>
-          </div>
-
           <div className="grid grid-cols-2 md:grid-cols-12 gap-8 md:gap-6">
             {/* Brand column */}
             <div className="col-span-2 md:col-span-3">
@@ -208,7 +170,7 @@ export default function Footer() {
           <div className="mt-12 pt-6 border-t border-white/[0.06]">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <p className="text-[12px] text-white/20">
-                &copy; 2025 Vyapaar Global Ltd. All rights reserved.
+                &copy; 2026 Vyapaar Global Ltd. All rights reserved.
               </p>
               <div className="flex items-center gap-6">
                 <Link
