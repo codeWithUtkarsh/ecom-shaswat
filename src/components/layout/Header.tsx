@@ -122,8 +122,8 @@ export default function Header() {
           <nav className="hidden lg:flex items-center gap-0.5 flex-1 justify-center">
             {[
               { href: "/", label: "Home" },
-              { href: "/products/vegetable", label: "Shop" },
-              { href: "/products/organic", label: "Catalogue" },
+              { href: "/products/grains", label: "Shop" },
+              { href: "/products/whole-spices", label: "Catalogue" },
               { href: "/seller", label: "Suppliers" },
               { href: "/contact", label: "Contact" },
             ].map((link) => (
@@ -345,8 +345,8 @@ export default function Header() {
             </div>
             {[
               { href: "/", label: "Home" },
-              { href: "/products/vegetable", label: "Shop" },
-              { href: "/products/organic", label: "Catalogue" },
+              { href: "/products/grains", label: "Shop" },
+              { href: "/products/whole-spices", label: "Catalogue" },
               { href: "/seller", label: "Suppliers" },
               { href: "/contact", label: "Contact" },
             ].map((link) => (

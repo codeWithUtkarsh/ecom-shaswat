@@ -7,11 +7,12 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
 const tabs = [
   { id: "all", name: "All" },
-  { id: "snacks", name: "Baking material" },
-  { id: "fruits", name: "Fresh Fruits" },
-  { id: "cake-milk", name: "Milks & Dairies" },
-  { id: "chicken-meat", name: "Meats" },
-  { id: "vegetable", name: "Vegetables" },
+  { id: "grains", name: "Grains" },
+  { id: "flours", name: "Flours" },
+  { id: "lentils-pulses", name: "Lentils & Pulses" },
+  { id: "whole-spices", name: "Whole Spices" },
+  { id: "blended-spices", name: "Blended Spices" },
+  { id: "ready-mixes", name: "Ready Mixes" },
 ];
 
 export default function CategoryBrowser() {

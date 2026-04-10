@@ -62,6 +62,19 @@ All images are licensed under the **[Pexels License](https://www.pexels.com/lice
 - **Fit:** Cropped to square
 - **Downloaded:** 2026-04-06
 
+## About Page — Journey Section Images (added 2026-04-10)
+
+| Usage | Pexels Photo ID | Search Query Used | Pexels URL |
+|-------|----------------|-------------------|------------|
+| Source (Indian spice market) | 2802527 | indian spice market farm harvest | https://www.pexels.com/photo/2802527/ |
+| Process (Food processing) | 5946081 | food factory quality inspection processing | https://www.pexels.com/photo/5946081/ |
+| Ship (Cargo container ship) | 1117210 | cargo ship container port logistics | https://www.pexels.com/photo/1117210/ |
+| Deliver (Warehouse shelves) | 4483608 | delivery warehouse store retail | https://www.pexels.com/photo/4483608/ |
+
+- **Resolution:** 800 x 600 pixels (cropped)
+- **Format:** JPEG (served directly from Pexels CDN)
+- **License:** [Pexels License](https://www.pexels.com/license/) — free for commercial use
+
 ## Notes
 
 - `khaman-dhokla-mix-200g.png` and `khaman-dhokla-mix-500g.png` share the same source image (same product, different pack sizes)

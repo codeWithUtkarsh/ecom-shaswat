@@ -34,7 +34,7 @@ export default function YouMightNeed() {
           </p>
         </div>
         <Link
-          href="/products/vegetable"
+          href="/products/whole-spices"
           className="flex items-center gap-1.5 text-sm font-semibold text-forest bg-forest/[0.05] border border-forest/10 hover:bg-terra hover:border-terra hover:text-white px-5 py-2.5 rounded-full transition-all duration-300 group"
         >
           View All

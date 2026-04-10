@@ -56,7 +56,7 @@ export default function Navigation() {
 
           {/* Links */}
           <Link
-            href="/products/vegetable"
+            href="/products/whole-spices"
             className="flex items-center gap-1.5 text-sm font-medium text-orange hover:text-orange-dark transition-colors"
           >
             <Flame size={14} /> Hot Deals
@@ -65,7 +65,7 @@ export default function Navigation() {
             Home
           </Link>
           <Link
-            href="/products/vegetable"
+            href="/products/grains"
             className="text-sm font-medium text-surface-500 hover:text-navy transition-colors"
           >
             Shop

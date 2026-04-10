@@ -63,7 +63,7 @@ const panels = [
     color: "#8b5cf6",
     accent: "from-violet-500/20 to-violet-900/40",
     image:
-      "https://images.unsplash.com/photo-1607672632458-9eb56696346a?w=800&h=1000&fit=crop",
+      "https://images.unsplash.com/photo-1606585546917-fdd0f04bb8b4?w=800&h=1000&fit=crop",
     stat: "35+",
     statLabel: "Product Lines",
     heading: "Complete Indian Pantry",

@@ -28,7 +28,7 @@ export default function FeatureHighlights() {
           </h2>
         </div>
         <Link
-          href="/products/vegetable"
+          href="/products/whole-spices"
           className="hidden sm:inline-flex text-xs font-semibold text-terra hover:text-terra-500 transition-colors"
         >
           View all →

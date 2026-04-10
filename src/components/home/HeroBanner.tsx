@@ -40,7 +40,7 @@ const slides = [
   },
   {
     image:
-      "https://images.unsplash.com/photo-1607672632458-9eb56696346a?w=1600&h=900&fit=crop",
+      "https://images.unsplash.com/photo-1606585546917-fdd0f04bb8b4?w=1600&h=900&fit=crop",
     subtitle: "Branded Ready Mixes",
     title: "MTR & Tata Sampann",
     desc: "Trusted Indian brands now available in bulk for UK retailers.",
