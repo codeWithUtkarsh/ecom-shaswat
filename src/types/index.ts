@@ -2,14 +2,18 @@ export interface Product {
   id: string;
   name: string;
   price: number;
-  originalPrice?: number;
+  original_price?: number;
   discount?: number;
   image: string;
   category: string;
+  category_label: string;
   description: string;
-  rating?: number;
-  reviews?: number;
-  inStock: boolean;
+  weight?: string;
+  rating: number;
+  reviews: number;
+  vendor: string;
+  badge?: "hot" | "new" | "sale" | "out";
+  in_stock: boolean;
 }
 
 export interface CartItem {
@@ -22,6 +26,8 @@ export interface Category {
   name: string;
   slug: string;
   image: string;
+  icon: string;
+  item_count: number;
   subcategories?: string[];
 }
 
@@ -32,6 +38,15 @@ export interface Banner {
   image: string;
   cta: string;
   link: string;
+}
+
+export interface PromoBanner {
+  id: string;
+  label: string;
+  value: string;
+  description: string;
+  bgColor: string;
+  textColor: string;
 }
 
 export interface User {

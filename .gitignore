@@ -33,3 +33,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# server
+server/node_modules
+server/dist
+server/.env
+.idea
+/.codegraph/*
+/.codegraph/.gitignore
+/.playwright-mcp/*
