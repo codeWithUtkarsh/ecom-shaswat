@@ -31,7 +31,7 @@ const slides = [
   },
   {
     image:
-      "https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=1600&h=900&fit=crop",
+      "https://images.unsplash.com/photo-1774946103680-3d34a461a581?w=1600&h=900&fit=crop",
     subtitle: "Wholesale Lentils & Pulses",
     title: "Bulk Supply",
     desc: "Toor dal, masoor dal, rajma & chickpeas — machine cleaned, sortex graded.",
@@ -40,7 +40,7 @@ const slides = [
   },
   {
     image:
-      "https://images.unsplash.com/photo-1606585546917-fdd0f04bb8b4?w=1600&h=900&fit=crop",
+      "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=1600&h=900&fit=crop",
     subtitle: "Branded Ready Mixes",
     title: "MTR & Tata Sampann",
     desc: "Trusted Indian brands now available in bulk for UK retailers.",
@@ -74,7 +74,7 @@ const fadeSlideUp = {
     opacity: 0,
     y: -20,
     filter: "blur(4px)",
-    transition: { duration: 0.25, ease: "easeIn" },
+    transition: { duration: 0.25, ease: "easeIn" as const },
   },
 };
 
@@ -156,13 +156,13 @@ export default function HeroBanner() {
       opacity: 1,
       scale: 1.05,
       x: 0,
-      transition: { duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] },
+      transition: { duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] },
     },
     exit: (dir: number) => ({
       opacity: 0,
       scale: 1,
       x: dir > 0 ? -80 : 80,
-      transition: { duration: 0.5, ease: "easeIn" },
+      transition: { duration: 0.5, ease: "easeIn" as const },
     }),
   };
 

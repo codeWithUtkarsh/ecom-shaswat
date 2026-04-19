@@ -16,7 +16,18 @@ app.use(morgan('dev'));
 
 // CORS
 app.use(cors({
-  origin: [env.FRONTEND_URL],
+  origin: (origin, callback) => {
+    const allowed = [
+      env.FRONTEND_URL,
+      'http://localhost:3000',
+    ];
+    // Allow Vercel preview deployments
+    if (!origin || allowed.includes(origin) || /\.vercel\.app$/.test(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
