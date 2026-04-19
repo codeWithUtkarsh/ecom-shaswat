@@ -59,6 +59,6 @@ export const promotionalSections = [
     title: "Tata Sampann Blended Spices",
     category: "blended-spices",
     image:
-      "https://images.unsplash.com/photo-1606585546917-fdd0f04bb8b4?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=600&h=400&fit=crop",
   },
 ];

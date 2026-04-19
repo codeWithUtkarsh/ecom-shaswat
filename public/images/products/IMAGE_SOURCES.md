@@ -75,9 +75,24 @@ All images are licensed under the **[Pexels License](https://www.pexels.com/lice
 - **Format:** JPEG (served directly from Pexels CDN)
 - **License:** [Pexels License](https://www.pexels.com/license/) — free for commercial use
 
+## MTR Product Images (updated 2026-04-12)
+
+The following Ready Mixes images were replaced with official MTR product packaging photos.
+**Source:** https://www.mtrfoods.com/ — used with written permission from MTR Foods.
+
+| File | Source |
+|------|--------|
+| `khaman-dhokla-mix-200g.png` | mtrfoods.com — Khaman Dhokla Ready Mix |
+| `khaman-dhokla-mix-500g.png` | mtrfoods.com — Khaman Dhokla Ready Mix (same image as 200g) |
+| `rava-dosa-mix-500g.png` | mtrfoods.com — Rava Dosa Ready Mix |
+| `rava-idli-mix-500g.png` | mtrfoods.com — Rava Idli Ready Mix |
+| `rice-idli-mix-500g.png` | mtrfoods.com — Rice Idli Ready Mix |
+
+- **Format:** PNG (converted from WebP source)
+- **License:** Used with written permission from MTR Foods for this B2B wholesale platform
+
 ## Notes
 
 - `khaman-dhokla-mix-200g.png` and `khaman-dhokla-mix-500g.png` share the same source image (same product, different pack sizes)
-- Images show the prepared food/raw ingredients rather than branded packaging, as these are generic product photos for a B2B wholesale catalog
-- For the "Ready Mixes" category, images show the final prepared dish rather than the mix package
+- `dosa-mix-200g.png` and `dosa-mix-500g.png` still use Pexels royalty-free images (prepared dosa photos)
 - For "Blended Spices", images show spice powder/blends rather than branded packaging
