@@ -68,6 +68,7 @@ export default function Footer() {
                 alt="Vyapaar Global"
                 width={140}
                 height={40}
+                style={{ width: "auto", height: "auto" }}
                 className="h-10 w-auto object-contain brightness-0 invert mb-5"
               />
               <p className="text-[13px] text-white/35 leading-relaxed mb-6 max-w-[240px]">

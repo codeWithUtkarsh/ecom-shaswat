@@ -58,6 +58,7 @@ export default function PromoBanners() {
                   src={card.image}
                   alt={card.title}
                   fill
+                  sizes="(max-width: 1024px) 40vw, 25vw"
                   className="object-cover group-hover:scale-110 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-cream-50 via-cream-50/70 to-transparent transition-opacity duration-500 group-hover:opacity-80" />

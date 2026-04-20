@@ -395,7 +395,9 @@ export default function HeroBanner() {
                   src="https://images.unsplash.com/photo-1586201375761-83865001e31c?w=600&h=400&fit=crop"
                   alt="Grains and flour"
                   fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover"
+                  priority
                 />
               </motion.div>
               <div className="relative z-[2] p-6 lg:p-8 flex flex-col justify-center h-full">
@@ -435,6 +437,7 @@ export default function HeroBanner() {
                   src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=600&h=400&fit=crop"
                   alt="Whole spices"
                   fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover"
                 />
               </motion.div>

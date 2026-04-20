@@ -123,7 +123,7 @@ export default function Header() {
             {[
               { href: "/", label: "Home" },
               { href: "/products/grains", label: "Shop" },
-              { href: "/products/whole-spices", label: "Catalogue" },
+              { href: "/catalogue", label: "Catalogue" },
               { href: "/seller", label: "Suppliers" },
               { href: "/contact", label: "Contact" },
             ].map((link) => (
@@ -346,7 +346,7 @@ export default function Header() {
             {[
               { href: "/", label: "Home" },
               { href: "/products/grains", label: "Shop" },
-              { href: "/products/whole-spices", label: "Catalogue" },
+              { href: "/catalogue", label: "Catalogue" },
               { href: "/seller", label: "Suppliers" },
               { href: "/contact", label: "Contact" },
             ].map((link) => (

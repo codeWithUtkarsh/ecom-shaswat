@@ -100,6 +100,7 @@ export default function AboutPage() {
           src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=1600&h=900&fit=crop"
           alt="Indian spices"
           fill
+          sizes="100vw"
           className="object-cover"
           priority
         />
