@@ -62,15 +62,23 @@ Get these from the Supabase dashboard → **Project Settings → API**.
 
 ### 3.2 Backend (`server/.env`)
 
-The Express server typically needs a **service role key** in addition to the URL. Never commit this key — it bypasses Row Level Security.
+The Express server requires the Supabase URL, anon key, and **JWT secret** (used to verify the Bearer tokens the frontend sends on authenticated requests). The service role key is optional and used only for elevated server-side operations.
 
 ```
 SUPABASE_URL=https://<your-project-ref>.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=<your-service-role-key>
+SUPABASE_ANON_KEY=<your-anon-public-key>
+SUPABASE_JWT_SECRET=<your-jwt-secret>
+SUPABASE_SERVICE_ROLE_KEY=<your-service-role-key>   # optional
 PORT=4000
+FRONTEND_URL=http://localhost:3000                   # CORS allowlist
 ```
 
-> ⚠️ **Anon key vs service role key**: The frontend uses the *anon* key (safe for browser). The backend uses the *service role* key (server-only, full DB access). Mixing these up is a common security mistake.
+Get the **JWT secret** from Supabase dashboard → **Project Settings → API → JWT Settings → JWT Secret**. Without it, the server will reject every request to `/api/cart`, `/api/orders`, `/api/profile`, and `/api/wishlist` with 401.
+
+> ⚠️ **Three different keys, three different purposes**:
+> - **Anon key** — safe for browser, scoped by Row Level Security. Used by the frontend Supabase client and by the Express server when no user is authenticated.
+> - **JWT secret** — server-only. Used by the Express server to verify the authenticity of `Bearer` tokens sent by the frontend.
+> - **Service role key** — server-only, bypasses RLS entirely. Use sparingly for admin-only operations.
 
 ---
 

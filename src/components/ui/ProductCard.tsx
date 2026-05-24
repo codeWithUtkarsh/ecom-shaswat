@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Heart, Star, ShoppingCart } from "lucide-react";
 import { Product } from "@/types";
 import { useCart } from "@/lib/cart-context";
+import { useWishlist } from "@/lib/wishlist-context";
 import { useState } from "react";
 
 interface ProductCardProps {
@@ -13,8 +14,9 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCart();
-  const [liked, setLiked] = useState(false);
+  const { isWishlisted, toggleWishlist } = useWishlist();
   const [addedFeedback, setAddedFeedback] = useState(false);
+  const liked = isWishlisted(product.id);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -27,7 +29,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const handleLike = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setLiked(!liked);
+    toggleWishlist(product);
   };
 
   return (

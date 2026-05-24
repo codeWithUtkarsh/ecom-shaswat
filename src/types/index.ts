@@ -19,6 +19,14 @@ export interface Product {
 export interface CartItem {
   product: Product;
   quantity: number;
+  /** Server-side row id, present once the item is persisted to the backend cart. */
+  cartItemId?: string;
+}
+
+export interface WishlistItem {
+  product: Product;
+  /** Server-side row id, present once persisted. */
+  wishlistItemId?: string;
 }
 
 export interface Category {

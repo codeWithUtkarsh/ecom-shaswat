@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
   Mail,
   Lock,
@@ -13,14 +12,16 @@ import {
   AlertCircle,
   CheckCircle,
   Leaf,
+  Store,
+  Truck,
 } from "lucide-react";
-import { useAuth } from "@/lib/auth-context";
+import { useAuth, type AccountType } from "@/lib/auth-context";
 
 export default function SignupPage() {
-  const router = useRouter();
   const { signUp } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [emailExists, setEmailExists] = useState(false);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -29,11 +30,13 @@ export default function SignupPage() {
     phone: "",
     password: "",
     confirmPassword: "",
+    accountType: "retailer" as AccountType,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setEmailExists(false);
     setSuccess(false);
     setLoading(true);
 
@@ -50,23 +53,22 @@ export default function SignupPage() {
     }
 
     try {
-      const { error } = await signUp(
+      const { error, emailExists } = await signUp(
         formData.email,
         formData.password,
         formData.name,
         formData.phone,
+        formData.accountType,
       );
 
-      if (error) {
+      if (emailExists) {
+        setEmailExists(true);
+      } else if (error) {
         setError(
           error.message || "Failed to create account. Please try again.",
         );
       } else {
         setSuccess(true);
-        setTimeout(() => {
-          router.push("/");
-          router.refresh();
-        }, 2000);
       }
     } catch {
       setError("An unexpected error occurred. Please try again.");
@@ -82,6 +84,38 @@ export default function SignupPage() {
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-warmth">
       <div className="max-w-md w-full animate-fade-up">
         <div className="bg-cream-50 rounded-3xl p-8 lg:p-10 shadow-soft-lg border border-forest/5">
+          {success ? (
+            <div className="text-center">
+              <div className="w-14 h-14 rounded-full bg-forest/10 flex items-center justify-center mx-auto mb-5">
+                <CheckCircle size={26} className="text-forest" />
+              </div>
+              <h2 className="font-display text-2xl font-semibold text-forest italic mb-2">
+                Check your email
+              </h2>
+              <p className="text-bark-500 text-sm mb-1">
+                We sent a verification link to
+              </p>
+              <p className="text-forest font-medium text-sm mb-6 break-all">
+                {formData.email}
+              </p>
+              <p className="text-bark-400 text-xs mb-8 leading-relaxed">
+                Click the link in the email to activate your account. Once verified, you can sign in below.
+              </p>
+              <Link
+                href="/auth/login"
+                className="inline-flex w-full items-center justify-center gap-2 bg-forest text-cream py-3 rounded-full font-semibold text-sm hover:bg-forest-400 transition-all"
+              >
+                Go to sign in
+              </Link>
+              <Link
+                href="/"
+                className="inline-flex w-full items-center justify-center mt-3 text-bark-400 hover:text-bark-600 text-sm transition-colors"
+              >
+                Return home
+              </Link>
+            </div>
+          ) : (
+            <>
           {/* Header */}
           <div className="text-center mb-8">
             <div className="w-12 h-12 rounded-full bg-forest/[0.06] flex items-center justify-center mx-auto mb-4">
@@ -95,8 +129,40 @@ export default function SignupPage() {
             </p>
           </div>
 
+          {/* Email already exists */}
+          {emailExists && (
+            <div className="mb-6 p-4 bg-terra/5 border border-terra/20 rounded-xl">
+              <div className="flex items-start gap-2 mb-3">
+                <AlertCircle
+                  size={18}
+                  className="text-terra mt-0.5 flex-shrink-0"
+                />
+                <div className="text-sm">
+                  <p className="font-semibold text-terra mb-1">
+                    This email is already in use
+                  </p>
+                  <p className="text-bark-500 break-all">{formData.email}</p>
+                </div>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Link
+                  href={`/auth/login?email=${encodeURIComponent(formData.email)}`}
+                  className="flex-1 text-center bg-forest text-cream py-2.5 rounded-full text-xs font-semibold hover:bg-forest-400 transition-all"
+                >
+                  Sign in instead
+                </Link>
+                <Link
+                  href={`/auth/forgot-password?email=${encodeURIComponent(formData.email)}`}
+                  className="flex-1 text-center border border-forest/15 text-bark-600 py-2.5 rounded-full text-xs font-semibold hover:bg-forest/[0.04] transition-all"
+                >
+                  Reset password
+                </Link>
+              </div>
+            </div>
+          )}
+
           {/* Error */}
-          {error && (
+          {error && !emailExists && (
             <div className="mb-6 p-4 bg-accent-rose/5 border border-accent-rose/15 rounded-xl flex items-start gap-2">
               <AlertCircle
                 size={18}
@@ -106,22 +172,69 @@ export default function SignupPage() {
             </div>
           )}
 
-          {/* Success */}
-          {success && (
-            <div className="mb-6 p-4 bg-forest/5 border border-forest/15 rounded-xl flex items-start gap-2">
-              <CheckCircle
-                size={18}
-                className="text-forest mt-0.5 flex-shrink-0"
-              />
-              <p className="text-sm text-forest">
-                Account created successfully! Please check your email to verify
-                your account.
-              </p>
-            </div>
-          )}
-
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
+            <fieldset>
+              <legend className="block text-sm font-medium text-bark-600 mb-2">
+                I&apos;m signing up as a
+              </legend>
+              <div className="grid grid-cols-2 gap-2">
+                {(
+                  [
+                    {
+                      value: "retailer" as const,
+                      label: "Retailer",
+                      hint: "I buy products",
+                      Icon: Store,
+                    },
+                    {
+                      value: "supplier" as const,
+                      label: "Supplier",
+                      hint: "I sell products",
+                      Icon: Truck,
+                    },
+                  ]
+                ).map(({ value, label, hint, Icon }) => {
+                  const selected = formData.accountType === value;
+                  return (
+                    <label
+                      key={value}
+                      className={`relative flex flex-col items-start gap-1 p-3 rounded-xl border cursor-pointer transition-all ${
+                        selected
+                          ? "border-terra bg-terra/5"
+                          : "border-forest/8 bg-cream hover:border-forest/15"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="accountType"
+                        value={value}
+                        checked={selected}
+                        onChange={() =>
+                          setFormData({ ...formData, accountType: value })
+                        }
+                        className="sr-only"
+                      />
+                      <div className="flex items-center gap-2">
+                        <Icon
+                          size={16}
+                          className={selected ? "text-terra" : "text-bark-400"}
+                        />
+                        <span
+                          className={`text-sm font-semibold ${
+                            selected ? "text-forest" : "text-bark-600"
+                          }`}
+                        >
+                          {label}
+                        </span>
+                      </div>
+                      <span className="text-[11px] text-bark-400">{hint}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </fieldset>
+
             <div>
               <label
                 htmlFor="name"
@@ -163,9 +276,10 @@ export default function SignupPage() {
                   type="email"
                   required
                   value={formData.email}
-                  onChange={(e) =>
-                    setFormData({ ...formData, email: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setFormData({ ...formData, email: e.target.value });
+                    if (emailExists) setEmailExists(false);
+                  }}
                   className={inputClass}
                   placeholder="you@example.com"
                 />
@@ -252,7 +366,7 @@ export default function SignupPage() {
                     })
                   }
                   className={inputClass}
-                  placeholder="•••••���••"
+                  placeholder="••••••••"
                 />
               </div>
             </div>
@@ -287,14 +401,10 @@ export default function SignupPage() {
 
             <button
               type="submit"
-              disabled={loading || success}
+              disabled={loading}
               className="w-full bg-forest text-cream py-3.5 rounded-full font-semibold hover:bg-forest-400 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading
-                ? "Creating Account..."
-                : success
-                  ? "Account Created!"
-                  : "Create Account"}
+              {loading ? "Creating Account..." : "Create Account"}
             </button>
           </form>
 
@@ -308,6 +418,8 @@ export default function SignupPage() {
               Sign in
             </Link>
           </p>
+            </>
+          )}
         </div>
       </div>
     </div>
