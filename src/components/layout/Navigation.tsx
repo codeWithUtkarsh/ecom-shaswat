@@ -65,12 +65,6 @@ export default function Navigation() {
             Home
           </Link>
           <Link
-            href="/products/grains"
-            className="text-sm font-medium text-surface-500 hover:text-navy transition-colors"
-          >
-            Shop
-          </Link>
-          <Link
             href="/seller"
             className="text-sm font-medium text-surface-500 hover:text-navy transition-colors"
           >

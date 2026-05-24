@@ -4,6 +4,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { CartProvider } from "@/lib/cart-context";
 import { AuthProvider } from "@/lib/auth-context";
+import { WishlistProvider } from "@/lib/wishlist-context";
 
 export const metadata: Metadata = {
   title:
@@ -21,11 +22,13 @@ export default function RootLayout({
     <html lang="en">
       <body className="font-sans bg-cream text-bark grain">
         <AuthProvider>
-          <CartProvider>
-            <Header />
-            <main>{children}</main>
-            <Footer />
-          </CartProvider>
+          <WishlistProvider>
+            <CartProvider>
+              <Header />
+              <main>{children}</main>
+              <Footer />
+            </CartProvider>
+          </WishlistProvider>
         </AuthProvider>
       </body>
     </html>

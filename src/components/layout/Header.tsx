@@ -15,7 +15,7 @@ import {
 import { useCart } from "@/lib/cart-context";
 import { useAuth } from "@/lib/auth-context";
 import { useState, useRef, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
@@ -29,9 +29,20 @@ export default function Header() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [categories, setCategories] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const menuRef = useRef<HTMLDivElement>(null);
   const catRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const q = searchQuery.trim();
+    if (q.length < 2) return;
+    setShowMobileMenu(false);
+    setSearchQuery("");
+    router.push(`/search?q=${encodeURIComponent(q)}`);
+  };
   const isHome = pathname === "/";
 
   useEffect(() => {
@@ -122,7 +133,6 @@ export default function Header() {
           <nav className="hidden lg:flex items-center gap-0.5 flex-1 justify-center">
             {[
               { href: "/", label: "Home" },
-              { href: "/products/grains", label: "Shop" },
               { href: "/catalogue", label: "Catalogue" },
               { href: "/seller", label: "Suppliers" },
               { href: "/contact", label: "Contact" },
@@ -186,9 +196,11 @@ export default function Header() {
           <div className="flex items-center gap-2 lg:gap-3 flex-shrink-0 ml-auto lg:ml-0">
             {/* Search */}
             <div className="hidden md:block w-48 xl:w-56">
-              <div className="relative">
+              <form onSubmit={handleSearchSubmit} className="relative">
                 <input
                   type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search products..."
                   className={`w-full px-4 py-2 border text-sm focus:outline-none pr-10 transition-all duration-300 ${
                     isTransparent
@@ -197,6 +209,8 @@ export default function Header() {
                   }`}
                 />
                 <button
+                  type="submit"
+                  aria-label="Search"
                   className={`absolute right-1 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center transition-colors ${
                     isTransparent
                       ? "bg-white/20 text-white"
@@ -205,7 +219,7 @@ export default function Header() {
                 >
                   <Search size={13} />
                 </button>
-              </div>
+              </form>
             </div>
 
             {/* Wishlist */}
@@ -326,9 +340,11 @@ export default function Header() {
             : "border-white/60 bg-white/95 backdrop-blur-md"
         }`}>
           <nav className="max-w-[1400px] mx-auto px-6 py-4 space-y-1">
-            <div className="relative mb-3">
+            <form onSubmit={handleSearchSubmit} className="relative mb-3">
               <input
                 type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search products..."
                 className={`w-full px-4 py-2.5 border text-sm pr-10 transition-all ${
                   isTransparent
@@ -336,16 +352,18 @@ export default function Header() {
                     : "bg-white/60 border-white/60 text-forest/70 placeholder:text-forest/30"
                 }`}
               />
-              <Search
-                size={16}
+              <button
+                type="submit"
+                aria-label="Search"
                 className={`absolute right-3 top-1/2 -translate-y-1/2 ${
                   isTransparent ? "text-white/40" : "text-forest/30"
                 }`}
-              />
-            </div>
+              >
+                <Search size={16} />
+              </button>
+            </form>
             {[
               { href: "/", label: "Home" },
-              { href: "/products/grains", label: "Shop" },
               { href: "/catalogue", label: "Catalogue" },
               { href: "/seller", label: "Suppliers" },
               { href: "/contact", label: "Contact" },

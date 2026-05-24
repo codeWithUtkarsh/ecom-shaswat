@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { createAnonClient } from '../lib/supabase';
-import { requireAuth } from '../middleware/auth';
+import { requireAuth, requireAdmin } from '../middleware/auth';
 
 import productsRouter from './products';
 import categoriesRouter from './categories';
@@ -11,6 +11,8 @@ import cartRouter from './cart';
 import ordersRouter from './orders';
 import profileRouter from './profile';
 import wishlistRouter from './wishlist';
+import quoteRequestsRouter from './quote-requests';
+import adminRouter from './admin';
 import webhooksRouter from './webhooks';
 
 const router = Router();
@@ -33,6 +35,10 @@ router.use('/cart', requireAuth, cartRouter);
 router.use('/orders', requireAuth, ordersRouter);
 router.use('/profile', requireAuth, profileRouter);
 router.use('/wishlist', requireAuth, wishlistRouter);
+router.use('/quote-requests', requireAuth, quoteRequestsRouter);
+
+// Admin routes (auth + admin-allowlist check)
+router.use('/admin', requireAuth, requireAdmin, adminRouter);
 
 // Webhooks (no auth — verified via Stripe signature)
 router.use('/webhooks', webhooksRouter);

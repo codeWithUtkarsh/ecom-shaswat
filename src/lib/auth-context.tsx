@@ -4,14 +4,20 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
 
+export type AccountType = 'retailer' | 'supplier';
+
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string, fullName: string, phone: string) => Promise<{ error: any }>;
+  signUp: (
+    email: string,
+    password: string,
+    fullName: string,
+    phone: string,
+    accountType: AccountType
+  ) => Promise<{ error: any; emailExists?: boolean }>;
   signOut: () => Promise<void>;
-  signInWithGoogle: () => Promise<{ error: any }>;
-  signInWithFacebook: () => Promise<{ error: any }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -47,42 +53,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { error };
   };
 
-  const signUp = async (email: string, password: string, fullName: string, phone: string) => {
-    const { error } = await supabase.auth.signUp({
+  const signUp = async (
+    email: string,
+    password: string,
+    fullName: string,
+    phone: string,
+    accountType: AccountType
+  ) => {
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
           full_name: fullName,
           phone: phone,
+          account_type: accountType,
         },
       },
     });
+
+    // Supabase signals "already registered" two different ways depending on
+    // whether email confirmation is enabled in the project settings:
+    //  - confirmations ON:  returns success with data.user.identities === []
+    //  - confirmations OFF: returns an explicit error with "already registered"
+    if (error?.message && /already (registered|exists|in use)/i.test(error.message)) {
+      return { error, emailExists: true };
+    }
+    if (!error && data?.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+      return {
+        error: { message: 'This email is already registered.' },
+        emailExists: true,
+      };
+    }
+
     return { error };
   };
 
   const signOut = async () => {
     await supabase.auth.signOut();
-  };
-
-  const signInWithGoogle = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-    return { error };
-  };
-
-  const signInWithFacebook = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'facebook',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-    return { error };
   };
 
   return (
@@ -93,8 +101,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signIn,
         signUp,
         signOut,
-        signInWithGoogle,
-        signInWithFacebook,
       }}
     >
       {children}
