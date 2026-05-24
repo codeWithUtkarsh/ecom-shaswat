@@ -38,6 +38,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [items, setItems] = useState<CartItem[]>([]);
   const lastUserId = useRef<string | null>(null);
+  // Debounced quantity-sync state: per-product timers + pending target values.
+  // Rapid +/− clicks update local state immediately and queue one server call.
+  const pendingTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+  const pendingValues = useRef<Map<string, { cartItemId: string; quantity: number }>>(new Map());
 
   // Sync with server on login; clear on logout.
   useEffect(() => {
@@ -120,30 +124,47 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems((prev) => prev.filter((item) => item.product.id !== productId));
   };
 
-  const updateQuantity = async (productId: string, quantity: number) => {
+  const updateQuantity = (productId: string, quantity: number) => {
     if (quantity <= 0) {
-      await removeFromCart(productId);
+      void removeFromCart(productId);
       return;
     }
     const target = items.find((i) => i.product.id === productId);
     if (!target) return;
 
-    if (user && target.cartItemId) {
-      try {
-        const { item } = await api.cart.update(target.cartItemId, quantity);
-        const updated = toCartItem(item);
-        setItems((prev) => prev.map((i) => (i.product.id === productId ? updated : i)));
-        return;
-      } catch (err) {
-        console.error('Failed to update cart quantity', err);
-        return;
-      }
-    }
-
+    // 1. Optimistic local update — UI reflects the new quantity immediately.
     setItems((prev) =>
       prev.map((item) =>
         item.product.id === productId ? { ...item, quantity } : item
       )
+    );
+
+    // 2. Debounced server sync for signed-in users. Rapid clicks reset the
+    //    timer so we only send one PATCH with the final value (~400ms after
+    //    the last click). Guests have no server cart, so we skip.
+    if (!user || !target.cartItemId) return;
+
+    pendingValues.current.set(productId, {
+      cartItemId: target.cartItemId,
+      quantity,
+    });
+
+    const existing = pendingTimers.current.get(productId);
+    if (existing) clearTimeout(existing);
+
+    pendingTimers.current.set(
+      productId,
+      setTimeout(async () => {
+        const pending = pendingValues.current.get(productId);
+        if (!pending) return;
+        pendingValues.current.delete(productId);
+        pendingTimers.current.delete(productId);
+        try {
+          await api.cart.update(pending.cartItemId, pending.quantity);
+        } catch (err) {
+          console.error('Failed to sync cart quantity', err);
+        }
+      }, 400)
     );
   };
 
@@ -166,30 +187,27 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const submitQuoteRequest = async (message: string) => {
     const quoteItems = items.filter((i) => i.product.price === 0);
-    // One UUID per submission groups all items into a single batch the
-    // admin can quote and the customer can accept atomically.
-    const batchId = crypto.randomUUID();
-    let submitted = 0;
-    let failed = 0;
+    if (quoteItems.length === 0) return { submitted: 0, failed: 0 };
 
-    for (const item of quoteItems) {
-      try {
-        await api.quoteRequests.create({
-          product_id: item.product.id,
-          quantity: item.quantity,
-          message: message.trim() || undefined,
-          batch_id: batchId,
-        });
-        // Remove on success so partial-failure leaves the rest intact for retry.
+    // ONE batched POST → ONE row of N items on the server → ONE email each
+    // direction. All-or-nothing: if validation fails for any product, nothing
+    // is inserted and nothing is removed from cart.
+    try {
+      await api.quoteRequests.createBatch({
+        items: quoteItems.map((i) => ({
+          product_id: i.product.id,
+          quantity: i.quantity,
+        })),
+        message: message.trim() || undefined,
+      });
+      for (const item of quoteItems) {
         await removeFromCart(item.product.id);
-        submitted += 1;
-      } catch (err) {
-        console.error('Failed to submit quote for', item.product.id, err);
-        failed += 1;
       }
+      return { submitted: quoteItems.length, failed: 0 };
+    } catch (err) {
+      console.error('Failed to submit quote batch', err);
+      return { submitted: 0, failed: quoteItems.length };
     }
-
-    return { submitted, failed };
   };
 
   return (

@@ -72,35 +72,60 @@ const wrap = (innerHtml: string) => `
   </div>
 </body></html>`;
 
-export function quoteRequestSalesNotification(opts: {
+function renderItemsTable(
+  items: Array<{ productName: string; quantity: number }>
+): string {
+  return items
+    .map(
+      (i) => `
+    <tr>
+      <td style="padding:10px 0;border-bottom:1px solid rgba(45,58,46,0.06);font-size:14px;color:#2d3a2e;">${escapeHtml(i.productName)}</td>
+      <td style="padding:10px 0;border-bottom:1px solid rgba(45,58,46,0.06);text-align:right;font-size:14px;color:#4a534b;">Qty ${i.quantity}</td>
+    </tr>`
+    )
+    .join('');
+}
+
+export function quoteBatchRequestSalesNotification(opts: {
   customerEmail: string;
-  productName: string;
-  quantity: number;
+  items: Array<{ productName: string; quantity: number }>;
   message: string | null;
-  quoteRequestId: string;
+  batchId: string;
 }) {
+  const heading =
+    opts.items.length === 1
+      ? escapeHtml(opts.items[0].productName)
+      : `${opts.items.length} items requested`;
   return wrap(`
     <p style="font-size:11px;font-weight:600;letter-spacing:0.15em;color:#c47a3a;text-transform:uppercase;margin:0 0 8px;">New Quote Request</p>
-    <h2 style="font-family:Georgia,serif;font-style:italic;color:#2d3a2e;font-size:24px;margin:0 0 20px;">${escapeHtml(opts.productName)}</h2>
-    <table style="width:100%;font-size:14px;color:#4a534b;">
-      <tr><td style="padding:6px 0;">Customer:</td><td style="padding:6px 0;font-weight:600;">${escapeHtml(opts.customerEmail)}</td></tr>
-      <tr><td style="padding:6px 0;">Quantity:</td><td style="padding:6px 0;font-weight:600;">${opts.quantity}</td></tr>
-      <tr><td style="padding:6px 0;">Request ID:</td><td style="padding:6px 0;font-family:monospace;font-size:12px;">${escapeHtml(opts.quoteRequestId)}</td></tr>
-    </table>
-    ${opts.message ? `<div style="margin-top:20px;padding:16px;background:#f7f4ee;border-radius:12px;"><p style="font-size:12px;color:#8a8175;margin:0 0 4px;font-weight:600;">Customer note</p><p style="margin:0;font-size:14px;line-height:1.6;color:#4a534b;">${escapeHtml(opts.message)}</p></div>` : ''}
+    <h2 style="font-family:Georgia,serif;font-style:italic;color:#2d3a2e;font-size:24px;margin:0 0 16px;">${heading}</h2>
+    <p style="font-size:14px;color:#4a534b;margin:0 0 16px;">
+      From <strong>${escapeHtml(opts.customerEmail)}</strong>
+    </p>
+    <div style="background:#f7f4ee;padding:16px 20px;border-radius:12px;margin-bottom:20px;">
+      <table style="width:100%;border-collapse:collapse;">${renderItemsTable(opts.items)}</table>
+    </div>
+    ${opts.message ? `<div style="margin-bottom:20px;"><p style="font-size:12px;color:#8a8175;margin:0 0 6px;font-weight:600;">Customer note</p><p style="margin:0;font-size:14px;line-height:1.6;color:#4a534b;">${escapeHtml(opts.message)}</p></div>` : ''}
+    <p style="font-size:11px;color:#8a8175;margin:0;">Batch ID: <span style="font-family:monospace;">${escapeHtml(opts.batchId)}</span></p>
   `);
 }
 
-export function quoteRequestCustomerConfirmation(opts: {
-  productName: string;
-  quantity: number;
+export function quoteBatchRequestCustomerConfirmation(opts: {
+  items: Array<{ productName: string; quantity: number }>;
 }) {
+  const summary =
+    opts.items.length === 1
+      ? `your request for <strong>${escapeHtml(opts.items[0].productName)}</strong> (qty ${opts.items[0].quantity})`
+      : `your request for <strong>${opts.items.length} items</strong>`;
   return wrap(`
     <p style="font-size:11px;font-weight:600;letter-spacing:0.15em;color:#c47a3a;text-transform:uppercase;margin:0 0 8px;">Quote Request Received</p>
     <h2 style="font-family:Georgia,serif;font-style:italic;color:#2d3a2e;font-size:24px;margin:0 0 16px;">Thanks — we've got your request</h2>
     <p style="font-size:15px;line-height:1.6;color:#4a534b;margin:0 0 16px;">
-      We received your quote request for <strong>${escapeHtml(opts.productName)}</strong> (quantity: ${opts.quantity}).
+      We received ${summary}.
     </p>
+    <div style="background:#f7f4ee;padding:16px 20px;border-radius:12px;margin-bottom:20px;">
+      <table style="width:100%;border-collapse:collapse;">${renderItemsTable(opts.items)}</table>
+    </div>
     <p style="font-size:15px;line-height:1.6;color:#4a534b;margin:0 0 16px;">
       Our sourcing team will reply with a quote within <strong>1–2 business days</strong>. You can track the status of your request in your account.
     </p>

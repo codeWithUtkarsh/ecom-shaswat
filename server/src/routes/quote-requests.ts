@@ -1,11 +1,12 @@
 import { Router, Request, Response, NextFunction } from 'express';
+import { randomUUID } from 'crypto';
 import { jsonOk, jsonError } from '../helpers/response';
 import { env } from '../config/env';
 import { getPolar } from '../lib/polar';
 import {
   sendEmail,
-  quoteRequestSalesNotification,
-  quoteRequestCustomerConfirmation,
+  quoteBatchRequestSalesNotification,
+  quoteBatchRequestCustomerConfirmation,
 } from '../lib/email';
 
 const router = Router();
@@ -89,100 +90,129 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
 /**
  * POST /api/quote-requests
- * Submit one row of a quote request. The frontend cart loops through quote
- * items in a basket and posts each one with a shared batch_id (generated
- * client-side) so the admin sees them as one logical submission.
+ * Submit a batch of quote items in one atomic request.
+ *
+ * Body: { items: [{ product_id, quantity }], message?: string }
+ *
+ * Generates one batch_id, inserts all rows atomically, sends ONE sales
+ * notification + ONE customer confirmation. If any product validation
+ * fails, nothing is inserted (all-or-nothing semantics).
  */
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { product_id, quantity, message, batch_id } = req.body ?? {};
+    const { items, message } = req.body ?? {};
 
-    if (!product_id || typeof product_id !== 'string') {
-      return jsonError(res, 'product_id is required', 400);
+    if (!Array.isArray(items) || items.length === 0) {
+      return jsonError(res, 'items array is required (1 or more entries)', 400);
     }
-    const qty = Number(quantity);
-    if (!Number.isInteger(qty) || qty < 1) {
-      return jsonError(res, 'quantity must be a positive integer', 400);
+    if (items.length > 50) {
+      return jsonError(res, 'too many items in one quote (max 50)', 400);
     }
     if (message != null && (typeof message !== 'string' || message.length > 2000)) {
       return jsonError(res, 'message must be a string up to 2000 characters', 400);
     }
-    if (batch_id != null && (typeof batch_id !== 'string' || !UUID_RE.test(batch_id))) {
-      return jsonError(res, 'batch_id must be a valid UUID', 400);
+
+    for (const item of items) {
+      if (!item?.product_id || typeof item.product_id !== 'string') {
+        return jsonError(res, 'each item must have a product_id string', 400);
+      }
+      const qty = Number(item.quantity);
+      if (!Number.isInteger(qty) || qty < 1) {
+        return jsonError(res, `quantity for ${item.product_id} must be a positive integer`, 400);
+      }
     }
 
-    // Verify the product exists and is genuinely quote-only.
-    const { data: product, error: productError } = await req.supabase
+    // Fetch all referenced products in one query.
+    const productIds: string[] = items.map((i: any) => i.product_id);
+    const { data: products, error: productsError } = await req.supabase
       .from('products')
       .select('id, name, price')
-      .eq('id', product_id)
-      .single();
+      .in('id', productIds);
 
-    if (productError || !product) {
-      return jsonError(res, 'Product not found', 404);
+    if (productsError) return jsonError(res, productsError.message, 500);
+
+    const productById = new Map<string, { id: string; name: string; price: number }>(
+      (products ?? []).map((p: any) => [p.id, p])
+    );
+
+    // Verify every product exists and is quote-only (price === 0).
+    for (const item of items) {
+      const product = productById.get(item.product_id);
+      if (!product) {
+        return jsonError(res, `Product ${item.product_id} not found`, 404);
+      }
+      if (Number(product.price) > 0) {
+        return jsonError(
+          res,
+          `"${product.name}" has a published price — add it to the cart and check out normally instead of requesting a quote.`,
+          400
+        );
+      }
     }
-    if (Number(product.price) > 0) {
-      return jsonError(
-        res,
-        'This product has a published price — add it to the cart and check out normally instead of requesting a quote.',
-        400
-      );
-    }
 
-    // Build insert payload — if no batch_id provided, the DB default
-    // (uuid_generate_v4()) gives this row its own batch of 1.
-    const insertPayload: Record<string, any> = {
-      user_id: req.user!.id,
-      product_id: product.id,
-      product_name: product.name,
-      quantity: qty,
-      message: message ?? null,
-    };
-    if (batch_id) insertPayload.batch_id = batch_id;
+    const batchId = randomUUID();
+    const rows = items.map((item: any) => {
+      const product = productById.get(item.product_id)!;
+      return {
+        user_id: req.user!.id,
+        batch_id: batchId,
+        product_id: product.id,
+        product_name: product.name,
+        quantity: Number(item.quantity),
+        message: message ?? null,
+      };
+    });
 
+    // Atomic insert — either all rows land or none do.
     const { data: created, error: insertError } = await req.supabase
       .from('quote_requests')
-      .insert(insertPayload)
-      .select()
-      .single();
+      .insert(rows)
+      .select();
 
     if (insertError) return jsonError(res, insertError.message, 500);
 
-    // Fire-and-forget emails — don't block the response on email delivery.
-    // Note: each item in a batch will currently send its own sales-notify email.
-    // A nicer V2 would debounce/coalesce per batch, but for V1 the admin
-    // dashboard groups them visually so multiple emails are tolerable.
+    // Fire-and-forget: ONE sales email + ONE customer confirmation per batch.
     void (async () => {
+      const itemsForEmail = (created ?? []).map((r: any) => ({
+        productName: r.product_name,
+        quantity: r.quantity,
+      }));
+
       if (env.SALES_EMAIL) {
+        const subject =
+          itemsForEmail.length === 1
+            ? `New quote request — ${itemsForEmail[0].productName} (qty ${itemsForEmail[0].quantity})`
+            : `New quote request — ${itemsForEmail.length} items from ${req.user!.email ?? 'a customer'}`;
         await sendEmail({
           to: env.SALES_EMAIL,
-          subject: `New quote request — ${product.name} (qty ${qty})`,
-          html: quoteRequestSalesNotification({
+          subject,
+          html: quoteBatchRequestSalesNotification({
             customerEmail: req.user!.email ?? 'unknown',
-            productName: product.name,
-            quantity: qty,
+            items: itemsForEmail,
             message: message ?? null,
-            quoteRequestId: created.id,
+            batchId,
           }),
         });
       } else {
         console.log(
-          `[quote-request] new from user=${req.user!.id} email=${req.user!.email ?? '?'} product="${product.name}" qty=${qty} batch=${created.batch_id} (SALES_EMAIL not set)`
+          `[quote-request] new batch=${batchId} from user=${req.user!.id} email=${req.user!.email ?? '?'} items=${itemsForEmail.length} (SALES_EMAIL not set)`
         );
       }
+
       if (req.user!.email) {
+        const subject =
+          itemsForEmail.length === 1
+            ? `We received your quote request — ${itemsForEmail[0].productName}`
+            : `We received your quote request — ${itemsForEmail.length} items`;
         await sendEmail({
           to: req.user!.email,
-          subject: `We received your quote request — ${product.name}`,
-          html: quoteRequestCustomerConfirmation({
-            productName: product.name,
-            quantity: qty,
-          }),
+          subject,
+          html: quoteBatchRequestCustomerConfirmation({ items: itemsForEmail }),
         });
       }
     })();
 
-    return jsonOk(res, { quote_request: created }, 201);
+    return jsonOk(res, { batch_id: batchId, items: created }, 201);
   } catch (err) {
     next(err);
   }

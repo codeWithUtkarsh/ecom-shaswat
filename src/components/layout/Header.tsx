@@ -20,9 +20,11 @@ import { usePathname, useRouter } from "next/navigation";
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
 export default function Header() {
-  const { getTotalItems, getTotalPrice } = useCart();
+  const { items, getTotalPrice } = useCart();
   const { user, signOut, loading } = useAuth();
-  const totalItems = getTotalItems();
+  // Distinct line-items, not summed quantity — matches B2B cart conventions
+  // and what users actually want to see ("3 items in cart" not "247 units").
+  const totalItems = items.length;
   const totalPrice = getTotalPrice();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showCategories, setShowCategories] = useState(false);

@@ -98,13 +98,14 @@ export const api = {
 
   quoteRequests: {
     list: () => apiFetch<{ batches: any[] }>('/quote-requests'),
-    create: (input: {
-      product_id: string;
-      quantity: number;
+    createBatch: (input: {
+      items: Array<{ product_id: string; quantity: number }>;
       message?: string;
-      batch_id?: string;
     }) =>
-      apiFetch<{ quote_request: any }>('/quote-requests', { method: 'POST', body: input }),
+      apiFetch<{ batch_id: string; items: any[] }>('/quote-requests', {
+        method: 'POST',
+        body: input,
+      }),
     acceptBatch: (batchId: string) =>
       apiFetch<{
         order_id: string;
