@@ -84,4 +84,52 @@ export const api = {
     remove: (id: string) =>
       apiFetch<{ message: string }>(`/wishlist/${id}`, { method: 'DELETE' }),
   },
+
+  orders: {
+    list: () => apiFetch<{ orders: any[] }>('/orders'),
+    get: (id: string) => apiFetch<{ order: any }>(`/orders/${id}`),
+    checkout: () =>
+      apiFetch<{
+        order_id: string;
+        checkout_url: string;
+        summary: { subtotal: number; shipping: number; pre_tax_total: number; currency: string; tax_note: string };
+      }>('/orders', { method: 'POST', body: {} }),
+  },
+
+  quoteRequests: {
+    list: () => apiFetch<{ batches: any[] }>('/quote-requests'),
+    create: (input: {
+      product_id: string;
+      quantity: number;
+      message?: string;
+      batch_id?: string;
+    }) =>
+      apiFetch<{ quote_request: any }>('/quote-requests', { method: 'POST', body: input }),
+    acceptBatch: (batchId: string) =>
+      apiFetch<{
+        order_id: string;
+        checkout_url: string;
+        summary: { subtotal: number; shipping: number; pre_tax_total: number; currency: string; tax_note: string };
+      }>(`/quote-requests/batch/${batchId}/accept`, { method: 'POST', body: {} }),
+  },
+
+  admin: {
+    quoteRequests: {
+      list: (status?: string) =>
+        apiFetch<{ batches: any[] }>(
+          `/admin/quote-requests${status ? `?status=${encodeURIComponent(status)}` : ''}`
+        ),
+      replyBatch: (
+        batchId: string,
+        input: {
+          items: Array<{ id: string; quoted_price: number }>;
+          sales_notes?: string;
+        }
+      ) =>
+        apiFetch<{ batch: any }>(`/admin/quote-requests/batch/${batchId}/reply`, {
+          method: 'POST',
+          body: input,
+        }),
+    },
+  },
 };

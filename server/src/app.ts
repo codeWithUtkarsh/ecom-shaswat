@@ -34,8 +34,8 @@ app.use(cors({
   maxAge: 86400,
 }));
 
-// Stripe webhook needs raw body — mount BEFORE express.json()
-app.use('/api/webhooks/stripe', express.raw({ type: 'application/json' }));
+// Polar webhook needs raw body for signature validation — mount BEFORE express.json()
+app.use('/api/webhooks/polar', express.raw({ type: 'application/json' }));
 
 // JSON body parser for all other routes
 app.use(express.json({ limit: '10kb' }));

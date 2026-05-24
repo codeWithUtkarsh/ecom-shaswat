@@ -1,5 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { jsonOk, jsonError } from '../helpers/response';
+import { env } from '../config/env';
+import { getPolar } from '../lib/polar';
 
 const router = Router();
 
@@ -25,15 +27,21 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
 /**
  * POST /api/orders
- * Checkout: creates an order from the user's current cart.
- * Server calculates totals — never trusts client-sent amounts.
+ * Creates a pending order from the user's cart and a Polar checkout session.
+ * Returns the Polar checkout URL for the frontend to redirect to.
+ *
+ * Polar acts as Merchant of Record: it collects payment, handles VAT/tax
+ * for the buyer's jurisdiction, and reports completion via webhook.
+ * We only pass the pre-tax goods + shipping amount; Polar adds tax on top.
  */
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { shipping_address } = req.body;
-
-    if (!shipping_address) {
-      return jsonError(res, 'shipping_address is required', 400);
+    if (!env.POLAR_PRODUCT_ID) {
+      return jsonError(
+        res,
+        'Payment is not configured. POLAR_PRODUCT_ID is missing.',
+        503
+      );
     }
 
     // 1. Fetch cart items with product details
@@ -47,18 +55,23 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
       return jsonError(res, 'Cart is empty', 400);
     }
 
-    // 2. Calculate total server-side & validate stock
+    // 2. Calculate subtotal server-side & validate stock.
+    //    NOTE: Polar handles tax (VAT/sales tax) as Merchant of Record, so we
+    //    only pre-tax goods + shipping. Tax is added at the Polar checkout.
     let subtotal = 0;
-    const orderItems: { product_id: string; product_name: string; product_price: number; quantity: number }[] = [];
+    const orderItems: {
+      product_id: string;
+      product_name: string;
+      product_price: number;
+      quantity: number;
+    }[] = [];
 
     for (const item of cartItems) {
       const product = item.product as any;
       if (!product) continue;
-
       if (!product.in_stock) {
         return jsonError(res, `"${product.name}" is out of stock`, 400);
       }
-
       subtotal += product.price * item.quantity;
       orderItems.push({
         product_id: product.id,
@@ -69,20 +82,28 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     }
 
     const shipping = subtotal > 500 ? 0 : 14.99;
-    const tax = subtotal * 0.2; // 20% VAT
-    const totalAmount = subtotal + shipping + tax;
+    const preTaxTotal = subtotal + shipping;
+    const amountInPence = Math.round(preTaxTotal * 100);
 
-    // TODO: Stripe PaymentIntent creation goes here
-    // const paymentIntent = await stripe.paymentIntents.create({ ... });
+    // Polar requires a minimum amount per checkout (configured on the product).
+    // A cart full of £0 quote-only items would create an invalid checkout, so
+    // we catch it here with a clear message.
+    if (subtotal < 1) {
+      return jsonError(
+        res,
+        'Your cart contains only quote-required items. Submit a quote request for each instead — once sales replies with pricing, you can place a normal order.',
+        400
+      );
+    }
 
-    // 3. Create order
+    // 3. Create pending order (no payment yet).
     const { data: order, error: orderError } = await req.supabase
       .from('orders')
       .insert({
         user_id: req.user!.id,
         status: 'pending',
-        total_amount: Math.round(totalAmount * 100) / 100,
-        shipping_address,
+        total_amount: preTaxTotal,
+        currency: 'GBP',
       })
       .select()
       .single();
@@ -96,28 +117,56 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
 
     if (itemsError) return jsonError(res, itemsError.message, 500);
 
-    // 5. Clear the cart
+    // 5. Create Polar checkout session
+    let checkoutUrl: string;
+    let polarCheckoutId: string;
+    try {
+      const polar = getPolar();
+      const checkout = await polar.checkouts.create({
+        products: [env.POLAR_PRODUCT_ID],
+        amount: amountInPence,
+        customerEmail: req.user!.email ?? undefined,
+        externalCustomerId: req.user!.id,
+        successUrl: `${env.FRONTEND_URL}/checkout/success?checkout_id={CHECKOUT_ID}`,
+        requireBillingAddress: true,
+        metadata: {
+          order_id: order.id,
+          user_id: req.user!.id,
+        },
+      });
+      checkoutUrl = checkout.url;
+      polarCheckoutId = checkout.id;
+    } catch (err: any) {
+      // Roll back the order so we don't leave orphaned pending rows.
+      await req.supabase.from('orders').delete().eq('id', order.id);
+      return jsonError(
+        res,
+        `Failed to create checkout: ${err.message || 'unknown error'}`,
+        502
+      );
+    }
+
+    // 6. Save checkout id on order for webhook reconciliation
     await req.supabase
-      .from('cart_items')
-      .delete()
-      .eq('user_id', req.user!.id);
-
-    // 6. Return created order with items
-    const { data: fullOrder } = await req.supabase
       .from('orders')
-      .select('*, order_items(*)')
-      .eq('id', order.id)
-      .single();
+      .update({ polar_checkout_id: polarCheckoutId })
+      .eq('id', order.id);
 
-    return jsonOk(res, {
-      order: fullOrder,
-      summary: {
-        subtotal: Math.round(subtotal * 100) / 100,
-        shipping,
-        tax: Math.round(tax * 100) / 100,
-        total: Math.round(totalAmount * 100) / 100,
+    return jsonOk(
+      res,
+      {
+        order_id: order.id,
+        checkout_url: checkoutUrl,
+        summary: {
+          subtotal: Math.round(subtotal * 100) / 100,
+          shipping,
+          pre_tax_total: preTaxTotal,
+          currency: 'GBP',
+          tax_note: 'Tax is calculated by Polar at checkout based on billing address.',
+        },
       },
-    }, 201);
+      201
+    );
   } catch (err) {
     next(err);
   }

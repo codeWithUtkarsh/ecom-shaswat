@@ -13,6 +13,15 @@ interface CartContextType {
   clearCart: () => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
+  /**
+   * Submits a quote request for every cart item with price === 0,
+   * sharing the given message across the batch. Each item becomes its own
+   * quote_requests row server-side. Successfully-submitted items are
+   * removed from the cart.
+   *
+   * Returns { submitted, failed } counts so the caller can show feedback.
+   */
+  submitQuoteRequest: (message: string) => Promise<{ submitted: number; failed: number }>;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -155,6 +164,34 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const getTotalPrice = () =>
     items.reduce((sum, item) => sum + (item.product.price ?? 0) * item.quantity, 0);
 
+  const submitQuoteRequest = async (message: string) => {
+    const quoteItems = items.filter((i) => i.product.price === 0);
+    // One UUID per submission groups all items into a single batch the
+    // admin can quote and the customer can accept atomically.
+    const batchId = crypto.randomUUID();
+    let submitted = 0;
+    let failed = 0;
+
+    for (const item of quoteItems) {
+      try {
+        await api.quoteRequests.create({
+          product_id: item.product.id,
+          quantity: item.quantity,
+          message: message.trim() || undefined,
+          batch_id: batchId,
+        });
+        // Remove on success so partial-failure leaves the rest intact for retry.
+        await removeFromCart(item.product.id);
+        submitted += 1;
+      } catch (err) {
+        console.error('Failed to submit quote for', item.product.id, err);
+        failed += 1;
+      }
+    }
+
+    return { submitted, failed };
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -165,6 +202,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         clearCart,
         getTotalItems,
         getTotalPrice,
+        submitQuoteRequest,
       }}
     >
       {children}

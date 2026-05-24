@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Heart, Star, ShoppingCart } from "lucide-react";
+import { Heart, Star, ShoppingCart, MessageSquare } from "lucide-react";
 import { Product } from "@/types";
 import { useCart } from "@/lib/cart-context";
 import { useWishlist } from "@/lib/wishlist-context";
@@ -17,6 +17,8 @@ export default function ProductCard({ product }: ProductCardProps) {
   const { isWishlisted, toggleWishlist } = useWishlist();
   const [addedFeedback, setAddedFeedback] = useState(false);
   const liked = isWishlisted(product.id);
+  // Quote-only products (sourced + custom-priced via email) are signaled by price=0.
+  const isQuoteOnly = product.price === 0;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -86,7 +88,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
         )}
 
-        {/* Quick add overlay on hover */}
+        {/* Quick add / add to quote list overlay on hover */}
         {product.in_stock && (
           <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-10">
             <button
@@ -94,11 +96,17 @@ export default function ProductCard({ product }: ProductCardProps) {
               className={`w-full flex items-center justify-center gap-2 py-3 text-xs font-semibold transition-colors duration-200 ${
                 addedFeedback
                   ? "bg-forest text-cream"
+                  : isQuoteOnly
+                  ? "bg-forest/90 backdrop-blur-sm text-cream hover:bg-forest"
                   : "bg-terra/90 backdrop-blur-sm text-white hover:bg-terra"
               }`}
             >
-              <ShoppingCart size={14} />
-              {addedFeedback ? "Added!" : "Quick Add"}
+              {isQuoteOnly ? <MessageSquare size={14} /> : <ShoppingCart size={14} />}
+              {addedFeedback
+                ? "Added!"
+                : isQuoteOnly
+                ? "Add to Quote List"
+                : "Quick Add"}
             </button>
           </div>
         )}
@@ -138,44 +146,55 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {/* Price */}
         <div className="flex items-baseline gap-2 mt-2.5">
-          {product.price != null ? (
-            <span className="font-display text-lg font-bold text-forest tracking-tight">
-              &pound;{product.price.toFixed(2)}
-            </span>
-          ) : (
-            <span className="font-display text-sm font-semibold text-terra">
+          {isQuoteOnly ? (
+            <span className="font-display text-sm font-semibold text-forest italic">
               Price on request
             </span>
-          )}
-          {product.original_price != null && (
-            <span className="text-xs text-bark-400 line-through">
-              &pound;{product.original_price.toFixed(2)}
-            </span>
-          )}
-          {product.discount && product.discount > 5 && (
-            <span className="text-[10px] font-semibold text-terra bg-terra/8 px-1.5 py-0.5 rounded">
-              -{product.discount}%
-            </span>
+          ) : (
+            <>
+              <span className="font-display text-lg font-bold text-forest tracking-tight">
+                &pound;{product.price.toFixed(2)}
+              </span>
+              {product.original_price != null && (
+                <span className="text-xs text-bark-400 line-through">
+                  &pound;{product.original_price.toFixed(2)}
+                </span>
+              )}
+              {product.discount && product.discount > 5 && (
+                <span className="text-[10px] font-semibold text-terra bg-terra/8 px-1.5 py-0.5 rounded">
+                  -{product.discount}%
+                </span>
+              )}
+            </>
           )}
         </div>
 
-        {/* Add to cart button (mobile/fallback) */}
+        {/* Add to cart / quote list button (mobile/fallback) */}
         <div className="mt-3 lg:hidden">
-          {product.in_stock ? (
-            <button
-              onClick={handleAddToCart}
-              className={`w-full py-2.5 rounded-xl text-xs font-semibold transition-all duration-300 active:scale-[0.98] ${
-                addedFeedback
-                  ? "bg-terra text-white"
-                  : "border border-terra/20 text-terra hover:bg-terra hover:text-white"
-              }`}
-            >
-              {addedFeedback ? "Added!" : "Add to Cart"}
-            </button>
-          ) : (
+          {!product.in_stock ? (
             <div className="w-full py-2.5 border border-bark-200 text-bark-400 text-xs font-semibold rounded-xl text-center cursor-not-allowed">
               Sold Out
             </div>
+          ) : (
+            <button
+              onClick={handleAddToCart}
+              className={`w-full inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-300 active:scale-[0.98] ${
+                addedFeedback
+                  ? isQuoteOnly
+                    ? "bg-forest text-cream"
+                    : "bg-terra text-white"
+                  : isQuoteOnly
+                  ? "border border-forest/20 text-forest hover:bg-forest hover:text-cream"
+                  : "border border-terra/20 text-terra hover:bg-terra hover:text-white"
+              }`}
+            >
+              {isQuoteOnly && !addedFeedback && <MessageSquare size={12} />}
+              {addedFeedback
+                ? "Added!"
+                : isQuoteOnly
+                ? "Add to Quote List"
+                : "Add to Cart"}
+            </button>
           )}
         </div>
       </div>

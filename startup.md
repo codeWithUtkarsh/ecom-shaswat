@@ -67,13 +67,26 @@ The Express server requires the Supabase URL, anon key, and **JWT secret** (used
 ```
 SUPABASE_URL=https://<your-project-ref>.supabase.co
 SUPABASE_ANON_KEY=<your-anon-public-key>
-SUPABASE_JWT_SECRET=<your-jwt-secret>
-SUPABASE_SERVICE_ROLE_KEY=<your-service-role-key>   # optional
+SUPABASE_SERVICE_ROLE_KEY=<your-service-role-key>   # required for webhooks (RLS bypass)
 PORT=4000
-FRONTEND_URL=http://localhost:3000                   # CORS allowlist
+FRONTEND_URL=http://localhost:3000                   # CORS allowlist + Polar redirect base
+
+# Polar payment integration (see section 4.2)
+POLAR_ACCESS_TOKEN=<your-organization-access-token>
+POLAR_WEBHOOK_SECRET=<base64-secret-from-polar-dashboard>
+POLAR_PRODUCT_ID=<uuid-of-your-pay-what-you-want-product>
+POLAR_SERVER=sandbox                                 # or 'production'
+
+# Email + admin (see section 4.3)
+RESEND_API_KEY=<re_xxx...>                           # leave empty → emails no-op gracefully
+FROM_EMAIL=onboarding@resend.dev                     # use your verified domain in prod
+SALES_EMAIL=sales@yourdomain.com                     # who gets new-quote notifications
+ADMIN_EMAILS=you@yourdomain.com,colleague@yourdomain.com
 ```
 
-Get the **JWT secret** from Supabase dashboard → **Project Settings → API → JWT Settings → JWT Secret**. Without it, the server will reject every request to `/api/cart`, `/api/orders`, `/api/profile`, and `/api/wishlist` with 401.
+Token verification on authenticated routes calls `supabase.auth.getUser(token)`, which delegates to Supabase's auth API. This works for all JWT signing algorithms (HS256, ES256, RS256) and survives Supabase's algorithm migrations — no local JWT secret needed.
+
+The **service role key** is required for the Polar webhook handler — webhooks aren't authenticated as a specific user, so they need to bypass RLS to update orders. Without it, paid orders will never be marked as paid.
 
 > ⚠️ **Three different keys, three different purposes**:
 > - **Anon key** — safe for browser, scoped by Row Level Security. Used by the frontend Supabase client and by the Express server when no user is authenticated.
@@ -92,6 +105,12 @@ Apply the SQL files in `supabase/` **in numeric order**. Out-of-order execution 
 | 2 | `002_add_missing_tables_and_columns.sql` | Schema extensions |
 | 3 | `003_seed_data.sql` | Initial reference data |
 | 4 | `004_real_product_catalog.sql` | Product catalog seed |
+| 5 | `005_polar_checkout.sql` | Polar payment columns on `orders` (checkout id, paid_at, currency) |
+| 6 | `006_order_items_insert_policy.sql` | Adds missing INSERT RLS policy on `order_items` (without it checkout fails) |
+| 7 | `007_products_price_not_null.sql` | Backfills NULL prices to 0 and enforces NOT NULL DEFAULT 0 going forward |
+| 8 | `008_quote_requests.sql` | Adds `quote_requests` table for the quote-driven sourcing flow |
+| 9 | `009_quote_order_link.sql` | Adds `order_id` FK on `quote_requests` so accepted quotes link to their resulting order |
+| 10 | `010_quote_batch.sql` | Adds `batch_id` to `quote_requests` so multi-item submissions stay grouped through admin reply + accept |
 
 ### Option A — Supabase SQL Editor (quickest)
 
@@ -112,6 +131,59 @@ psql "$SUPABASE_DB_URL" -f supabase/004_real_product_catalog.sql
 ```
 
 For deeper details on auth providers, OAuth redirect URLs, and RLS, see `SUPABASE_SETUP.md`.
+
+---
+
+## 4.2. Polar payment setup (one-time)
+
+The app uses **Polar.sh as Merchant of Record** for payments — Polar collects the buyer's payment and handles VAT/sales tax for their jurisdiction. You only see net amounts on payout. One-time setup:
+
+1. **Create a Polar organization** at https://polar.sh.
+2. **Create a single product** in Polar dashboard → Products → New product:
+   - Name: anything (e.g. "Vyapaar Global Order")
+   - Pricing: **Pay what you want** with a min of `£1.00`
+   - Currency: GBP
+   - Copy the product UUID into `POLAR_PRODUCT_ID` in `server/.env`.
+
+   This single product represents "any order on the site." The actual amount per checkout is passed in the API call, overriding the pay-what-you-want default. Line-item detail (which products, quantities, etc.) lives in our own `order_items` table.
+
+3. **Create an organization access token**: dashboard → Settings → Developers → New access token. Scope: `checkouts:read checkouts:write`. Copy into `POLAR_ACCESS_TOKEN`.
+
+4. **Create a webhook endpoint**: dashboard → Settings → Webhooks → New endpoint:
+   - URL: `https://<your-domain>/api/webhooks/polar` (for local dev, use a tunnel like `ngrok http 4000` and point Polar at the tunnel URL → `/api/webhooks/polar`)
+   - Events: `order.paid`, `order.updated`, `order.refunded`, `checkout.updated`
+   - Copy the generated webhook secret into `POLAR_WEBHOOK_SECRET` (this is base64; paste as-is — the SDK decodes it).
+
+5. **Sandbox vs production**: set `POLAR_SERVER=sandbox` for testing (no real card charges, separate dashboard at sandbox.polar.sh). Flip to `production` when launching.
+
+6. **Restart the server** after editing `server/.env` so the new vars are picked up.
+
+---
+
+## 4.3. Email + admin setup
+
+### Resend (transactional email)
+
+The app sends three transactional emails — sales-notify on new quote requests, customer-confirm on quote submission, and customer-notify when a quote is replied. Without a Resend key, all three are skipped gracefully (logged to console) so the app stays usable in dev without an account.
+
+1. Sign up at https://resend.com (free tier covers 100 emails/day, 3,000/month).
+2. **Dashboard → API Keys → Create API Key** → copy into `RESEND_API_KEY`.
+3. **Sender (`FROM_EMAIL`)**:
+   - **Dev / testing**: leave as `onboarding@resend.dev` (Resend's shared sender; works without domain verification, rate-limited, can only send to *your own signup email*).
+   - **Production**: dashboard → Domains → Add domain, add DNS records (SPF + DKIM), copy verified address (e.g. `noreply@yourdomain.com`) into `FROM_EMAIL`.
+4. **`SALES_EMAIL`**: the address that receives "new quote request" notifications. If unset, the server logs the request to console instead.
+
+### Admin allowlist
+
+Admins access `/admin/quotes` to reply to quote requests. There's no role table — admins are listed by email in `server/.env`:
+
+```
+ADMIN_EMAILS=you@yourdomain.com,sales@yourdomain.com
+```
+
+Comma-separated, case-insensitive. The backend checks `req.user.email` against this list on `/api/admin/*` routes; the frontend shows a "not authorized" screen if `GET /api/admin/quote-requests` returns 403.
+
+To add/remove admins: edit the env var, restart the server. No code change, no migration.
 
 ---
 
